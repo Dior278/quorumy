@@ -1,4 +1,4 @@
-/* Atlas identity, with readable layouts from 320px to large workspaces. */
+/* Quorumy identity, with readable layouts from 320px to large workspaces. */
 :root {
   color-scheme: dark;
 }
@@ -214,7 +214,7 @@ summary:focus-visible {
   letter-spacing: 0.16em;
   color: #c0b5c8;
 }
-.atlas-orbit {
+.quorumy-orbit {
   display: grid;
   place-items: center;
   flex-shrink: 0;
@@ -224,7 +224,7 @@ summary:focus-visible {
   border: 1px solid #f0c77730;
   background: radial-gradient(#f0c77716, transparent);
 }
-.atlas-orbit img {
+.quorumy-orbit img {
   width: 35px;
   height: 35px;
 }
@@ -793,11 +793,11 @@ summary:focus-visible {
   background: transparent;
   font-size: 24px;
 }
-.atlas-subtitles {
+.quorumy-subtitles {
   max-width: calc(100vw - 32px);
   border-radius: 15px;
 }
-.atlas-subtitles p {
+.quorumy-subtitles p {
   white-space: normal;
   max-height: 25vh;
   overflow: auto;
@@ -1084,7 +1084,7 @@ footer {
     font-size: 16px;
     padding: 13px 12px;
   }
-  .atlas-subtitles {
+  .quorumy-subtitles {
     bottom: 137px;
   }
   .global-error {

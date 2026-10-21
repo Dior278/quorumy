@@ -134,8 +134,8 @@ export class AudioBridge {
         floorProcessor.connect(silentFloor);
         silentFloor.connect(this.context.destination);
         floorProcessor.onaudioprocess = (event) => {
-          // Whole-system capture can contain Atlas itself. A separate meeting
-          // tab is isolated and can interrupt Atlas even during playback.
+          // Whole-system capture can contain Quorumy itself. A separate meeting
+          // tab is isolated and can interrupt Quorumy even during playback.
           if (source === "system" && this.playbackActive && !sharedTab) return;
           this.processFloor(event.inputBuffer.getChannelData(0), source);
         };

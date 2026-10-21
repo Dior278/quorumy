@@ -8,9 +8,9 @@ import json
 from pathlib import Path
 from uuid import uuid4
 
-from aparte.workspace.api.app import compose
-from aparte.workspace.api.hub import WebSocketHub
-from aparte.workspace.config import load_config, load_product
+from quorumy.workspace.api.app import compose
+from quorumy.workspace.api.hub import WebSocketHub
+from quorumy.workspace.config import load_config, load_product
 
 
 async def main():
@@ -40,7 +40,7 @@ async def main():
         for note in board["notes"]:
             assert all(e["quote"] in e["text"] for e in note["evidence"])
         await engine.commit_utterance(
-            "Atlas, recherche sur le web la documentation officielle de WebRTC et conserve la source pour notre équipe.",
+            "Quorumy, recherche sur le web la documentation officielle de WebRTC et conserve la source pour notre équipe.",
             "manual",
         )
         await asyncio.wait_for(engine.drain(), timeout=150)
@@ -82,8 +82,6 @@ async def main():
         print(json.dumps(report))
     finally:
         await engine.stop()
-        await resources.exa.close()
-        await resources.jinko.close()
         await engine.backend.close()
 
 

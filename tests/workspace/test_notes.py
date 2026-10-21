@@ -1,8 +1,8 @@
 import json
 from pathlib import Path
 
-from aparte.workspace.core.models import NotesDocument, Task, Utterance
-from aparte.workspace.core.notes import (
+from quorumy.workspace.core.models import NotesDocument, Task, Utterance
+from quorumy.workspace.core.notes import (
     integrate_sources,
     integrate_task_finding,
     normalize_notes,
@@ -33,7 +33,7 @@ def test_notes_are_deduplicated_bounded_and_section_owned() -> None:
         current_work=["invented work"],
     )
     tasks = [
-        Task(tool="exa_search", summary="Research verified sources", status="running")
+        Task(tool="research_web", summary="Research verified sources", status="running")
     ]
     normalized = normalize_notes(document, tasks)
     assert normalized.synthesis == ["One theme."]
@@ -67,7 +67,9 @@ def test_notes_can_shrink_when_understanding_improves() -> None:
 def test_real_session_regression_fixture_stays_concise_and_section_owned() -> None:
     fixture = Path(__file__).parent / "fixtures" / "notes-regressions.json"
     document = NotesDocument.model_validate(json.loads(fixture.read_text()))
-    tasks = [Task(tool="exa_search", summary="Verify Nepal flood facts", status="done")]
+    tasks = [
+        Task(tool="research_web", summary="Verify Nepal flood facts", status="done")
+    ]
     normalized = normalize_notes(document, tasks)
     rendered = render_notes(normalized, "en")
     assert normalized.participants == ["Pavel"]
@@ -98,7 +100,7 @@ def test_recommendations_never_become_commitments_without_explicit_agreement() -
 def test_completed_grounded_task_becomes_a_bounded_finding() -> None:
     document = NotesDocument()
     task = Task(
-        tool="exa_search",
+        tool="research_web",
         summary="verify the official flood alert source",
         status="done",
         result={

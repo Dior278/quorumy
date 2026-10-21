@@ -3,25 +3,24 @@ from __future__ import annotations
 import inspect
 from typing import cast
 
-from aparte.workspace import config
-from aparte.workspace.adapters import typesafe
-from aparte.workspace.core import coordinator, speaker
+from quorumy.workspace import config
+from quorumy.workspace.core import coordinator, speaker
 
 
 def test_prompt_catalog_formats_every_role() -> None:
     prompts = config.PROMPTS
-    assert "Atlas" in prompts.identity("Atlas")
-    assert "<SILENT>" in prompts.speaker_stream("Atlas")
-    assert "speak" in prompts.speaker_structured("Atlas", '{"speak": true}')
-    assert "source_ids" in prompts.notes("Atlas")
-    assert "title" in prompts.naming("Atlas")
-    assert "live board" in prompts.board("Atlas")
-    assert "source_card_ids" in prompts.board("Atlas")
+    assert "Quorumy" in prompts.identity("Quorumy")
+    assert "<SILENT>" in prompts.speaker_stream("Quorumy")
+    assert "speak" in prompts.speaker_structured("Quorumy", '{"speak": true}')
+    assert "source_ids" in prompts.notes("Quorumy")
+    assert "title" in prompts.naming("Quorumy")
+    assert "live board" in prompts.board("Quorumy")
+    assert "source_card_ids" in prompts.board("Quorumy")
     assert "Card count is neutral" in prompts.board_review()
     assert "semantic equivalence" in prompts.board_review()
     assert "Omission never deletes" in prompts.board_review()
-    assert "tool" in prompts.worker("Atlas", '{"tool": null}')
-    assert set(prompts.jev_questions("Atlas")) == {
+    assert "tool" in prompts.worker("Quorumy", '{"tool": null}')
+    assert set(prompts.jev_questions("Quorumy")) == {
         "addressee",
         "route",
         "memory",
@@ -32,7 +31,7 @@ def test_prompt_catalog_formats_every_role() -> None:
 
 
 def test_implementation_modules_reference_central_prompt_catalog() -> None:
-    for module in (speaker, coordinator, typesafe):
+    for module in (speaker, coordinator):
         source = inspect.getsource(module)
         assert "PROMPTS" in source
         assert "You are {" not in source
@@ -42,20 +41,21 @@ def test_implementation_modules_reference_central_prompt_catalog() -> None:
 def test_semantic_decision_contract_contains_no_behavioral_scores_or_thresholds() -> (
     None
 ):
-    questions = config.PROMPTS.jev_questions("Atlas")
+    questions = config.PROMPTS.jev_questions("Quorumy")
     for question in questions.values():
         assert isinstance(question, dict)
         typed_question = cast(dict[str, object], question)
         assert typed_question.get("type") == "choice"
+    source = inspect.getsource(config)
     assert not {
         "addressed_threshold",
         "mission_threshold",
         "memory_threshold",
-    }.intersection(config.DecisionConfig.model_fields)
+    }.intersection(source.split())
 
 
 def test_jev_contract_handles_asr_names_and_implicit_information_needs() -> None:
-    questions = config.PROMPTS.jev_questions("Atlas")
+    questions = config.PROMPTS.jev_questions("Quorumy")
     addressee = str(questions["addressee"])
     route = str(questions["route"])
     initiative = str(questions["initiative"])

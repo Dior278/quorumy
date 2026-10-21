@@ -784,7 +784,7 @@ footer p {
   transition: height 80ms linear;
 }
 
-.atlas-subtitles {
+.quorumy-subtitles {
   position: fixed;
   z-index: 29;
   bottom: 112px;
@@ -809,14 +809,14 @@ footer p {
   backdrop-filter: blur(10px);
   pointer-events: none;
 }
-.atlas-subtitles span {
+.quorumy-subtitles span {
   color: var(--gold);
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
-.atlas-subtitles p {
+.quorumy-subtitles p {
   margin: 0;
   min-width: 0;
   color: white;
@@ -1000,7 +1000,101 @@ select:focus {
     margin-inline: -10px;
     border-radius: 11px;
   }
-  .atlas-subtitles {
+  .quorumy-subtitles {
     bottom: 128px;
   }
+}
+
+.memory-banner {
+  margin: 8px auto 0;
+  max-width: 920px;
+  padding: 14px 18px;
+  border-radius: 14px;
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--line-strong);
+}
+.memory-strip {
+  display: grid;
+  gap: 8px;
+  margin: 16px 24px 0;
+}
+.memory-card {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+}
+.memory-card p {
+  margin: 4px 0 0;
+  color: var(--muted);
+}
+.memory-card button {
+  flex: none;
+}
+.hand-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.hand-signal {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 0;
+  border-radius: 999px;
+  padding: 8px 12px;
+  background: var(--gold);
+  color: var(--paper-ink);
+  font-weight: 650;
+  cursor: pointer;
+}
+.hand-signal.urgent {
+  background: #d43838;
+  color: white;
+  animation: hand-blink 0.8s steps(2) infinite;
+}
+@keyframes hand-blink {
+  50% {
+    opacity: 0.35;
+  }
+}
+.account-gate {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+.account-gate .launch-card {
+  width: min(460px, 100%);
+  display: grid;
+  gap: 12px;
+}
+.account-gate label {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+.account-gate input {
+  border: 1px solid var(--line-strong);
+  background: var(--ground-deep);
+  color: var(--text);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+.account-hint {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+.text-button {
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 0;
 }

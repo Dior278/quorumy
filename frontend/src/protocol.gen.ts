@@ -79,159 +79,6 @@ export interface components {
             /** Completed At */
             completed_at?: string | null;
         };
-        /** AtlasState */
-        AtlasState: {
-            /** Project Id */
-            project_id: string;
-            /** Protocol Version */
-            protocol_version: number;
-            /** @default booting */
-            process_status: components["schemas"]["ProcessStatus"];
-            /** @default idle */
-            session_status: components["schemas"]["SessionStatus"];
-            /** Session Id */
-            session_id?: string | null;
-            /**
-             * Title
-             * @default Nouvelle session
-             */
-            title: string;
-            /**
-             * Title Locked
-             * @default false
-             */
-            title_locked: boolean;
-            /**
-             * Identity Name
-             * @default Atlas
-             */
-            identity_name: string;
-            /**
-             * Language
-             * @default en
-             * @enum {string}
-             */
-            language: "en" | "fr" | "es" | "de" | "pt";
-            /**
-             * Voice Mode
-             * @default active
-             * @enum {string}
-             */
-            voice_mode: "active" | "muted";
-            /**
-             * Capture Mode
-             * @default mixed
-             * @enum {string}
-             */
-            capture_mode: "text" | "microphone" | "system" | "mixed";
-            /** Consent At */
-            consent_at?: string | null;
-            /** Minutes */
-            minutes?: {
-                [key: string]: unknown;
-            } | null;
-            /** Participants */
-            participants?: components["schemas"]["ParticipantState"][];
-            /**
-             * Output Mode
-             * @default local_only
-             * @enum {string}
-             */
-            output_mode: "local_only" | "room_speaker" | "meeting_injected";
-            /**
-             * Floor Busy
-             * @default false
-             */
-            floor_busy: boolean;
-            /**
-             * Room Epoch
-             * @default 0
-             */
-            room_epoch: number;
-            /**
-             * Partial
-             * @default
-             */
-            partial: string;
-            /**
-             * Notes
-             * @default
-             */
-            notes: string;
-            notes_document?: components["schemas"]["NotesDocument"];
-            /**
-             * Notes Version
-             * @default 0
-             */
-            notes_version: number;
-            /**
-             * Notes Cursor
-             * @default 0
-             */
-            notes_cursor: number;
-            /**
-             * Title Version
-             * @default 0
-             */
-            title_version: number;
-            /**
-             * Title Cursor
-             * @default 0
-             */
-            title_cursor: number;
-            /**
-             * Working
-             * @default
-             */
-            working: string;
-            /**
-             * Transcript
-             * @default []
-             */
-            transcript: components["schemas"]["Utterance"][];
-            /**
-             * Cards
-             * @default []
-             */
-            cards: components["schemas"]["Card"][];
-            /**
-             * Tasks
-             * @default []
-             */
-            tasks: components["schemas"]["Task"][];
-            /**
-             * Speeches
-             * @default []
-             */
-            speeches: components["schemas"]["Speech"][];
-            /**
-             * Activities
-             * @default []
-             */
-            activities: components["schemas"]["Activity"][];
-            /**
-             * Agent Runs
-             * @default []
-             */
-            agent_runs: components["schemas"]["AgentRun"][];
-            /**
-             * Decisions
-             * @default []
-             */
-            decisions: components["schemas"]["DecisionRecord"][];
-            /**
-             * Health
-             * @default {}
-             */
-            health: {
-                [key: string]: components["schemas"]["Health"];
-            };
-            pipeline?: components["schemas"]["PipelineMetrics"];
-            /** Created At */
-            created_at?: string;
-            /** Updated At */
-            updated_at?: string;
-        };
         /** BackendHello */
         BackendHello: {
             /**
@@ -268,7 +115,17 @@ export interface components {
             active_model: string;
             /** Models */
             models: string[];
-            state: components["schemas"]["AtlasState"];
+            /**
+             * Account Name
+             * @default
+             */
+            account_name: string;
+            /**
+             * Hf Ready
+             * @default false
+             */
+            hf_ready: boolean;
+            state: components["schemas"]["QuorumyState"];
             /** Sessions */
             sessions: components["schemas"]["SessionSummary"][];
         };
@@ -314,6 +171,38 @@ export interface components {
             /** Updated At */
             updated_at?: string;
         };
+        /**
+         * CarriedCommitment
+         * @description A commitment people already confirmed in an earlier meeting.
+         */
+        CarriedCommitment: {
+            /** Id */
+            id: string;
+            /** Session Id */
+            session_id: string;
+            /** Session Title */
+            session_title: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "decision" | "action" | "question" | "risk";
+            /** Text */
+            text: string;
+            /**
+             * Owner Name
+             * @default
+             */
+            owner_name: string;
+            /** Due Date */
+            due_date?: string | null;
+            /**
+             * Status
+             * @default open
+             * @enum {string}
+             */
+            status: "open" | "done";
+        };
         /** ClientHello */
         ClientHello: {
             /**
@@ -335,6 +224,18 @@ export interface components {
                 [key: string]: boolean;
             };
         };
+        /** CommitmentSettle */
+        CommitmentSettle: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "commitment.settle";
+            /** Session Id */
+            session_id: string;
+            /** Note Id */
+            note_id: string;
+        };
         /** Decision */
         Decision: {
             /**
@@ -347,7 +248,7 @@ export interface components {
              * @default uncertain
              * @enum {string}
              */
-            addressee: "atlas" | "another_participant" | "room" | "uncertain";
+            addressee: "quorumy" | "another_participant" | "room" | "uncertain";
             /**
              * Memory
              * @default ignore
@@ -372,6 +273,12 @@ export interface components {
              * @enum {string}
              */
             timing: "silent" | "next_gap" | "later";
+            /**
+             * Signal
+             * @default none
+             * @enum {string}
+             */
+            signal: "none" | "raise" | "urgent";
             /**
              * Rationale
              * @default
@@ -401,6 +308,45 @@ export interface components {
             type: "floor.changed";
             /** Busy */
             busy: boolean;
+        };
+        /** FloorDismiss */
+        FloorDismiss: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "floor.dismiss";
+        };
+        /** FloorGrant */
+        FloorGrant: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "floor.grant";
+        };
+        /** HandSignal */
+        HandSignal: {
+            /**
+             * Level
+             * @default idle
+             * @enum {string}
+             */
+            level: "idle" | "raised" | "urgent";
+            /**
+             * Summary
+             * @default
+             */
+            summary: string;
+            /**
+             * Pending Text
+             * @default
+             */
+            pending_text: string;
+            /** Source Ids */
+            source_ids?: string[];
+            /** Raised At */
+            raised_at?: string | null;
         };
         /** Health */
         Health: {
@@ -573,7 +519,7 @@ export interface components {
         /** ProtocolDocument */
         ProtocolDocument: {
             /** Client */
-            client: components["schemas"]["ClientHello"] | components["schemas"]["BoardCurate"] | components["schemas"]["TaskCancel"] | components["schemas"]["SessionStart"] | components["schemas"]["SessionOpen"] | components["schemas"]["SessionLanguage"] | components["schemas"]["VoiceModeCommand"] | components["schemas"]["SessionCommand"] | components["schemas"]["FloorChanged"] | components["schemas"]["CaptureChanged"] | components["schemas"]["TranscriptInject"] | components["schemas"]["PlaybackChanged"];
+            client: components["schemas"]["ClientHello"] | components["schemas"]["BoardCurate"] | components["schemas"]["TaskCancel"] | components["schemas"]["SessionStart"] | components["schemas"]["SessionOpen"] | components["schemas"]["SessionLanguage"] | components["schemas"]["VoiceModeCommand"] | components["schemas"]["SessionCommand"] | components["schemas"]["FloorChanged"] | components["schemas"]["FloorGrant"] | components["schemas"]["FloorDismiss"] | components["schemas"]["CommitmentSettle"] | components["schemas"]["CaptureChanged"] | components["schemas"]["TranscriptInject"] | components["schemas"]["PlaybackChanged"];
             /** Server */
             server: components["schemas"]["BackendHello"] | components["schemas"]["StateSnapshot"] | components["schemas"]["TranscriptPartial"] | components["schemas"]["SpeechAuthorized"] | components["schemas"]["SpeechStop"] | components["schemas"]["SpeechAudioChunk"] | components["schemas"]["SpeechAudioEnd"] | components["schemas"]["SpeechSubtitle"] | components["schemas"]["PresenceCue"] | components["schemas"]["ProtocolError"];
         };
@@ -588,6 +534,162 @@ export interface components {
             code: string;
             /** Message */
             message: string;
+        };
+        /** QuorumyState */
+        QuorumyState: {
+            /** Project Id */
+            project_id: string;
+            /** Protocol Version */
+            protocol_version: number;
+            /** @default booting */
+            process_status: components["schemas"]["ProcessStatus"];
+            /** @default idle */
+            session_status: components["schemas"]["SessionStatus"];
+            /** Session Id */
+            session_id?: string | null;
+            /**
+             * Title
+             * @default Nouvelle session
+             */
+            title: string;
+            /**
+             * Title Locked
+             * @default false
+             */
+            title_locked: boolean;
+            /**
+             * Identity Name
+             * @default Quorumy
+             */
+            identity_name: string;
+            /**
+             * Language
+             * @default en
+             * @enum {string}
+             */
+            language: "en" | "fr" | "es" | "de" | "pt";
+            /**
+             * Voice Mode
+             * @default active
+             * @enum {string}
+             */
+            voice_mode: "active" | "muted";
+            /**
+             * Capture Mode
+             * @default mixed
+             * @enum {string}
+             */
+            capture_mode: "text" | "microphone" | "system" | "mixed";
+            /** Consent At */
+            consent_at?: string | null;
+            /** Minutes */
+            minutes?: {
+                [key: string]: unknown;
+            } | null;
+            /** Carried */
+            carried?: components["schemas"]["CarriedCommitment"][];
+            /** Participants */
+            participants?: components["schemas"]["ParticipantState"][];
+            /**
+             * Output Mode
+             * @default local_only
+             * @enum {string}
+             */
+            output_mode: "local_only" | "room_speaker" | "meeting_injected";
+            /**
+             * Floor Busy
+             * @default false
+             */
+            floor_busy: boolean;
+            hand?: components["schemas"]["HandSignal"];
+            /**
+             * Room Epoch
+             * @default 0
+             */
+            room_epoch: number;
+            /**
+             * Partial
+             * @default
+             */
+            partial: string;
+            /**
+             * Notes
+             * @default
+             */
+            notes: string;
+            notes_document?: components["schemas"]["NotesDocument"];
+            /**
+             * Notes Version
+             * @default 0
+             */
+            notes_version: number;
+            /**
+             * Notes Cursor
+             * @default 0
+             */
+            notes_cursor: number;
+            /**
+             * Title Version
+             * @default 0
+             */
+            title_version: number;
+            /**
+             * Title Cursor
+             * @default 0
+             */
+            title_cursor: number;
+            /**
+             * Working
+             * @default
+             */
+            working: string;
+            /**
+             * Transcript
+             * @default []
+             */
+            transcript: components["schemas"]["Utterance"][];
+            /**
+             * Cards
+             * @default []
+             */
+            cards: components["schemas"]["Card"][];
+            /**
+             * Tasks
+             * @default []
+             */
+            tasks: components["schemas"]["Task"][];
+            /**
+             * Speeches
+             * @default []
+             */
+            speeches: components["schemas"]["Speech"][];
+            /**
+             * Activities
+             * @default []
+             */
+            activities: components["schemas"]["Activity"][];
+            /**
+             * Agent Runs
+             * @default []
+             */
+            agent_runs: components["schemas"]["AgentRun"][];
+            /**
+             * Decisions
+             * @default []
+             */
+            decisions: components["schemas"]["DecisionRecord"][];
+            /**
+             * Health
+             * @default {}
+             */
+            health: {
+                [key: string]: components["schemas"]["Health"];
+            };
+            pipeline?: components["schemas"]["PipelineMetrics"];
+            /** Created At */
+            created_at?: string;
+            /** Updated At */
+            updated_at?: string;
         };
         /** SessionCommand */
         SessionCommand: {
@@ -683,6 +785,11 @@ export interface components {
              * @default 0
              */
             utterance_count: number;
+            /**
+             * Open Commitments
+             * @default 0
+             */
+            open_commitments: number;
             /** Created At */
             created_at: string;
             /** Updated At */
@@ -772,6 +879,12 @@ export interface components {
             /** Reason */
             reason: string;
             audio?: components["schemas"]["SpeechAudio"] | null;
+            /**
+             * Playback
+             * @default server
+             * @enum {string}
+             */
+            playback: "server" | "browser";
         };
         /** SpeechStop */
         SpeechStop: {
@@ -824,7 +937,7 @@ export interface components {
              * @enum {string}
              */
             type: "state.snapshot";
-            state: components["schemas"]["AtlasState"];
+            state: components["schemas"]["QuorumyState"];
             /** Sessions */
             sessions: components["schemas"]["SessionSummary"][];
         };

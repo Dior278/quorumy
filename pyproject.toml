@@ -1,7 +1,7 @@
 [project]
-name = "aparte"
+name = "quorumy"
 version = "0.4.0"
-description = "Atlas2: an ambient meeting companion with verified commitments"
+description = "Quorumy: an ambient meeting companion with verified commitments"
 readme = "README.md"
 authors = [
     { name = "KAMDEM POUOKAM Ivann Harold", email = "kapoivha@gmail.com" },
@@ -17,13 +17,12 @@ dependencies = [
     "fastapi>=0.115,<1",
     "uvicorn>=0.34,<1",
     "websockets>=14,<16",
-    "pipelex-sdk>=0.12.0",
     "aiosqlite>=0.21,<1",
     "pyyaml>=6,<7",
 ]
 
 [project.scripts]
-aparte = "aparte.app:main"
+quorumy = "quorumy.app:main"
 
 [build-system]
 requires = ["uv_build>=0.12.19,<0.13.0"]
@@ -49,4 +48,4 @@ src = ["src"]
 select = ["E4", "E7", "E9", "F", "I"]
 
 [tool.ruff.lint.isort]
-known-first-party = ["aparte"]
+known-first-party = ["quorumy"]

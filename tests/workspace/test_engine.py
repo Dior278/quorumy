@@ -10,27 +10,28 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from aparte.workspace.config import AppConfig, ProductConfig, default_config_text
-from aparte.workspace.core.coordinator import Coordinator
-from aparte.workspace.core.engine import AtlasEngine
-from aparte.workspace.core.models import (
-    AtlasState,
+from quorumy.workspace.config import AppConfig, ProductConfig, default_config_text
+from quorumy.workspace.core.coordinator import Coordinator
+from quorumy.workspace.core.engine import QuorumyEngine
+from quorumy.workspace.core.memory import open_commitment_count
+from quorumy.workspace.core.models import (
     AudioResult,
     BoardOperation,
     Card,
     Decision,
     LLMResult,
     ProcessStatus,
+    QuorumyState,
     SessionStatus,
     SessionSummary,
     Speech,
 )
-from aparte.workspace.core.speaker import SpeakerAgent
-from aparte.workspace.core.tools import ToolRegistry, ToolSpec
+from quorumy.workspace.core.speaker import SpeakerAgent
+from quorumy.workspace.core.tools import ToolRegistry, ToolSpec
 
 
 class MemoryStore:
-    states: dict[str, AtlasState]
+    states: dict[str, QuorumyState]
 
     def __init__(self) -> None:
         self.states = {}
@@ -38,9 +39,12 @@ class MemoryStore:
     async def open(self) -> None:
         pass
 
-    async def load(self, session_id: str) -> AtlasState | None:
+    async def load(self, session_id: str) -> QuorumyState | None:
         state = self.states.get(session_id)
         return state.model_copy(deep=True) if state else None
+
+    async def all_sessions(self) -> list[QuorumyState]:
+        return [state.model_copy(deep=True) for state in self.states.values()]
 
     async def list_sessions(self) -> list[SessionSummary]:
         return [
@@ -50,6 +54,7 @@ class MemoryStore:
                 status=state.session_status,
                 preview=state.transcript[-1].text if state.transcript else "",
                 utterance_count=len(state.transcript),
+                open_commitments=open_commitment_count(state),
                 created_at=state.created_at,
                 updated_at=state.updated_at,
             )
@@ -57,7 +62,7 @@ class MemoryStore:
             if state.session_id
         ]
 
-    async def save(self, state: AtlasState) -> None:
+    async def save(self, state: QuorumyState) -> None:
         if state.session_id:
             self.states[state.session_id] = state.model_copy(deep=True)
 
@@ -87,10 +92,10 @@ class FakeDecision:
             "assigned" if route in {"investigate", "act"} else "none"
         )
 
-    async def evaluate(self, state: AtlasState, text: str) -> Decision:
+    async def evaluate(self, state: QuorumyState, text: str) -> Decision:
         return Decision(
             route=self.route,
-            addressee="atlas" if self.addressed else "another_participant",
+            addressee="quorumy" if self.addressed else "another_participant",
             memory="capture",
             initiative=self.initiative,
             speech_depth="brief" if self.addressed else "silent",
@@ -207,7 +212,7 @@ class SequenceDecision(FakeDecision):
         super().__init__()
         self.decisions = decisions
 
-    async def evaluate(self, state: AtlasState, text: str) -> Decision:
+    async def evaluate(self, state: QuorumyState, text: str) -> Decision:
         return self.decisions.pop(0)
 
 
@@ -307,7 +312,8 @@ def build_engine(
     published: list[dict[str, object]],
     tts: Any | None = None,
     tools: ToolRegistry | None = None,
-) -> AtlasEngine:
+    store: MemoryStore | None = None,
+) -> QuorumyEngine:
     config = AppConfig.model_validate(json.loads(default_config_text()))
     config = config.model_copy(
         update={
@@ -320,15 +326,15 @@ def build_engine(
     async def publish(message: dict[str, object]) -> None:
         published.append(message)
 
-    return AtlasEngine(
+    return QuorumyEngine(
         product=ProductConfig(
-            project_id="atlas",
-            display_name="Atlas",
-            companion_name="Atlas",
+            project_id="quorumy",
+            display_name="Quorumy",
+            companion_name="Quorumy",
             protocol_version=1,
         ),
         config=config,
-        store=MemoryStore(),
+        store=store or MemoryStore(),
         decision=decision,
         speaker=SpeakerAgent(generator),
         coordinator=Coordinator(
@@ -342,8 +348,8 @@ def build_engine(
 
 
 def test_coordinator_accepts_zen_yaml_shape() -> None:
-    state = AtlasState(project_id="test", protocol_version=1)
-    decision = Decision(route="respond", addressee="atlas")
+    state = QuorumyState(project_id="test", protocol_version=1)
+    decision = Decision(route="respond", addressee="quorumy")
     result = Coordinator._parse(
         "speech: Bonjour\ncard_title: Test\ncard_body: OK\ncard_kind: finding\nworking: Done\ntool: null",
         state,
@@ -354,8 +360,8 @@ def test_coordinator_accepts_zen_yaml_shape() -> None:
 
 
 def test_coordinator_ignores_empty_tool_name() -> None:
-    state = AtlasState(project_id="test", protocol_version=1)
-    decision = Decision(route="respond", addressee="atlas")
+    state = QuorumyState(project_id="test", protocol_version=1)
+    decision = Decision(route="respond", addressee="quorumy")
     result = Coordinator._parse(
         '{"speech":"Bonjour","tool":{"name":"","arguments":{}}}',
         state,
@@ -389,11 +395,11 @@ async def test_direct_turn_reaches_card_and_authorized_speech() -> None:
     coordinator = Coordinator(
         generator, ToolRegistry(1), config.policy, config.llm.roles
     )
-    engine = AtlasEngine(
+    engine = QuorumyEngine(
         product=ProductConfig(
             project_id="test",
-            display_name="Atlas",
-            companion_name="Atlas",
+            display_name="Quorumy",
+            companion_name="Quorumy",
             protocol_version=1,
         ),
         config=config,
@@ -452,11 +458,11 @@ async def test_sessions_are_isolated_and_resumable() -> None:
         pass
 
     store = MemoryStore()
-    engine = AtlasEngine(
+    engine = QuorumyEngine(
         product=ProductConfig(
             project_id="test",
-            display_name="Atlas",
-            companion_name="Atlas",
+            display_name="Quorumy",
+            companion_name="Quorumy",
             protocol_version=1,
         ),
         config=config,
@@ -527,11 +533,11 @@ async def test_stt_lifetime_follows_capture_session() -> None:
         pass
 
     stt = TrackingSTT()
-    engine = AtlasEngine(
+    engine = QuorumyEngine(
         product=ProductConfig(
             project_id="test",
-            display_name="Atlas",
-            companion_name="Atlas",
+            display_name="Quorumy",
+            companion_name="Quorumy",
             protocol_version=1,
         ),
         config=config,
@@ -550,11 +556,11 @@ async def test_stt_lifetime_follows_capture_session() -> None:
     assert stt.starts == 0
     await engine.start_session({})
     assert stt.starts == 1
-    assert stt.languages == ["en"]
-    await engine.set_language("fr")
+    assert stt.languages == ["fr"]
+    await engine.set_language("en")
     assert stt.starts == 2
     assert stt.stops == 1
-    assert stt.languages == ["en", "fr"]
+    assert stt.languages == ["fr", "en"]
     await engine.client_disconnected()
     assert stt.stops == 2
     await engine.stop()
@@ -623,7 +629,7 @@ async def test_speaker_second_stage_veto_suppresses_audio() -> None:
     )
     await engine.start()
     await engine.start_session({})
-    await engine.commit_utterance("Atlas is an interesting name.", source="manual")
+    await engine.commit_utterance("Quorumy is an interesting name.", source="manual")
     await engine.drain()
     assert any(speech.status == "suppressed" for speech in engine.state.speeches)
     assert not any(message.get("type") == "speech.authorized" for message in published)
@@ -660,7 +666,7 @@ async def test_addressed_research_runs_speaker_and_worker_in_parallel() -> None:
     await engine.start()
     await engine.start_session({})
     await engine.commit_utterance(
-        "Atlas, research the current situation.", source="manual"
+        "Quorumy, research the current situation.", source="manual"
     )
     await engine.drain()
     agents = {run.agent for run in engine.state.agent_runs}
@@ -672,7 +678,7 @@ async def test_addressed_research_runs_speaker_and_worker_in_parallel() -> None:
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
-    "initiative,addressee", [("proactive", "room"), ("assigned", "atlas")]
+    "initiative,addressee", [("proactive", "room"), ("assigned", "quorumy")]
 )
 async def test_silent_investigation_runs_worker_without_spoken_ack_or_report(
     initiative, addressee
@@ -730,7 +736,7 @@ async def test_new_room_turn_cancels_stale_direct_speech() -> None:
         [
             Decision(
                 route="respond",
-                addressee="atlas",
+                addressee="quorumy",
                 memory="capture",
                 speech_depth="normal",
                 timing="next_gap",
@@ -746,7 +752,7 @@ async def test_new_room_turn_cancels_stale_direct_speech() -> None:
     engine = build_engine(decision, generator, published)
     await engine.start()
     await engine.start_session({})
-    await engine.commit_utterance("Atlas, explain the situation.", source="manual")
+    await engine.commit_utterance("Quorumy, explain the situation.", source="manual")
     await asyncio.wait_for(generator.started.wait(), timeout=1)
     await engine.commit_utterance("No, I am talking to Pavel.", source="manual")
     await engine.drain()
@@ -769,7 +775,7 @@ async def test_tts_failure_terminates_speech_and_releases_playback() -> None:
     )
     await engine.start()
     await engine.start_session({})
-    await engine.commit_utterance("Atlas, give me the result.", source="manual")
+    await engine.commit_utterance("Quorumy, give me the result.", source="manual")
     await engine.drain()
     speech = engine.state.speeches[-1]
     assert speech.status == "failed"
@@ -835,7 +841,7 @@ async def test_research_mission_fails_truthfully_when_no_tool_is_selected() -> N
     )
     await engine.start()
     await engine.start_session({})
-    await engine.commit_utterance("Atlas, research the evidence.", source="manual")
+    await engine.commit_utterance("Quorumy, research the evidence.", source="manual")
     await engine.drain()
     mission = engine.state.tasks[-1]
     assert mission.status == "failed"

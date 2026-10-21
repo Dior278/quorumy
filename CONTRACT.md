@@ -1,4 +1,4 @@
-# Contribuer à Atlas2
+# Contribuer à Quorumy
 
 Suivre le [README](README.md) pour installer et lancer le projet.
 

@@ -1,6 +1,6 @@
 {
-  "project_id": "atlas",
-  "display_name": "Atlas2",
-  "companion_name": "Atlas",
-  "protocol_version": 12
+  "project_id": "quorumy",
+  "display_name": "Quorumy",
+  "companion_name": "Quorumy",
+  "protocol_version": 14
 }

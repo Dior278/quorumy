@@ -209,7 +209,7 @@ describe("AudioBridge capture", () => {
   });
 
   it.each(["mixed", "system"] as const)(
-    "interrupts Atlas for a remote participant in %s mode",
+    "interrupts Quorumy for a remote participant in %s mode",
     async (mode) => {
       const onFloor = vi.fn();
       const onBargeIn = vi.fn();
@@ -264,7 +264,7 @@ describe("AudioBridge capture", () => {
     }
   });
 
-  it("does not mistake Atlas in whole-system capture for a remote interruption", async () => {
+  it("does not mistake Quorumy in whole-system capture for a remote interruption", async () => {
     getDisplayMedia.mockResolvedValue(
       stream(
         [systemTrack],
@@ -292,7 +292,7 @@ describe("AudioBridge capture", () => {
     await bridge.stopCapture();
   });
 
-  it("does not treat mixed output energy as barge-in during Atlas playback", async () => {
+  it("does not treat mixed output energy as barge-in during Quorumy playback", async () => {
     const onFloor = vi.fn();
     const onBargeIn = vi.fn();
     const bridge = new AudioBridge(vi.fn(), onFloor, vi.fn(), onBargeIn);

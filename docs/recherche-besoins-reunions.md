@@ -1,8 +1,8 @@
 # Besoins et références
 
-Ces références ont guidé la conception d’Atlas2. Elles ne constituent pas une étude comparative des produits.
+Ces références ont guidé la conception de Quorumy. Elles ne constituent pas une étude comparative des produits.
 
-| Besoin | Choix dans Atlas2 | Référence |
+| Besoin | Choix dans Quorumy | Référence |
 | --- | --- | --- |
 | Vérifier les résumés et les actions | Citations consultables et validation humaine | [Récapitulatif Teams](https://support.microsoft.com/en-gb/teams/meetings-events/recap-a-teams-meeting) |
 | Maîtriser l’écoute et les données | Accord avant capture, pause et mémoire locale | [Harvard — AI Assistant Guidelines](https://www.huit.harvard.edu/ai-assistant-guidelines) |
@@ -13,4 +13,4 @@ Ces références ont guidé la conception d’Atlas2. Elles ne constituent pas u
 
 Autres références de conception : [VoiceAgentRAG](https://github.com/SalesforceAIResearch/VoiceAgentRAG), [thoughtful-agents](https://github.com/xybruceliu/thoughtful-agents) et [Speaking Meeting Bot](https://github.com/Meeting-Baas/speaking-meeting-bot), pour les recherches et les tours de parole ; [Structured Outputs](https://developers.openai.com/api/docs/guides/structured-outputs), pour les sorties structurées.
 
-La reprise de code Atlas et les auteurs sont déclarés dans [ATTRIBUTIONS.md](../ATTRIBUTIONS.md).
+La reprise de code Quorumy et les auteurs sont déclarés dans [ATTRIBUTIONS.md](../ATTRIBUTIONS.md).

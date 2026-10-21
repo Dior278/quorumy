@@ -2,9 +2,9 @@
 
 import asyncio
 
-from aparte.minutes import build_minutes
-from aparte.providers import LiveBackend
-from aparte.settings import AppSettings
+from quorumy.minutes import build_minutes
+from quorumy.providers import LiveBackend
+from quorumy.settings import AppSettings
 
 
 async def main():

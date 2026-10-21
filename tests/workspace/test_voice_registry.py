@@ -5,11 +5,11 @@ from typing import Any
 
 import pytest
 
-from aparte.workspace.adapters.stt_registry import STTRegistry
-from aparte.workspace.adapters.tts_registry import TTSRegistry
-from aparte.workspace.config import STTRegistryConfig, TTSRegistryConfig
-from aparte.workspace.core.models import AudioResult
-from aparte.workspace.core.ports import (
+from quorumy.workspace.adapters.stt_registry import STTRegistry
+from quorumy.workspace.adapters.tts_registry import TTSRegistry
+from quorumy.workspace.config import STTRegistryConfig, TTSRegistryConfig
+from quorumy.workspace.core.models import AudioResult
+from quorumy.workspace.core.ports import (
     AudioChunkCallback,
     EventCallback,
     TextCallback,
@@ -102,17 +102,17 @@ class FakeTTS:
 def stt_config() -> STTRegistryConfig:
     return STTRegistryConfig.model_validate(
         {
-            "active": "openai/model",
+            "active": "huggingface/primary",
             "providers": [
                 {
-                    "id": "openai/model",
-                    "endpoint": "wss://openai.test",
-                    "secret_env": "OPENAI_API_KEY",
+                    "id": "huggingface/primary",
+                    "endpoint": "https://huggingface.test/primary",
+                    "secret_env": "HF_TOKEN",
                 },
                 {
-                    "id": "gradium/default",
-                    "endpoint": "wss://gradium.test",
-                    "secret_env": "GRADIUM_API_KEY",
+                    "id": "huggingface/fallback",
+                    "endpoint": "https://huggingface.test/fallback",
+                    "secret_env": "HF_TOKEN",
                 },
             ],
         }
@@ -122,17 +122,17 @@ def stt_config() -> STTRegistryConfig:
 def tts_config() -> TTSRegistryConfig:
     return TTSRegistryConfig.model_validate(
         {
-            "active": "openai/model",
+            "active": "huggingface/primary",
             "providers": [
                 {
-                    "id": "openai/model",
-                    "endpoint": "https://openai.test",
-                    "secret_env": "OPENAI_API_KEY",
+                    "id": "huggingface/primary",
+                    "endpoint": "browser://primary",
+                    "secret_env": "HF_TOKEN",
                 },
                 {
-                    "id": "gradium/default",
-                    "endpoint": "wss://gradium.test",
-                    "secret_env": "GRADIUM_API_KEY",
+                    "id": "huggingface/fallback",
+                    "endpoint": "browser://fallback",
+                    "secret_env": "HF_TOKEN",
                 },
             ],
         }
@@ -144,7 +144,7 @@ async def test_stt_registry_falls_back_to_next_registered_provider() -> None:
     primary = FakeSTT(fails=True)
     fallback = FakeSTT()
     registry = STTRegistry(
-        stt_config(), {"openai/model": primary, "gradium/default": fallback}
+        stt_config(), {"huggingface/primary": primary, "huggingface/fallback": fallback}
     )
     events: list[tuple[str, dict[str, object]]] = []
 
@@ -159,7 +159,7 @@ async def test_stt_registry_falls_back_to_next_registered_provider() -> None:
 
     assert fallback.connected
     assert fallback.sent == [b"pcm"]
-    assert events[-1] == ("provider.selected", {"provider": "gradium/default"})
+    assert events[-1] == ("provider.selected", {"provider": "huggingface/fallback"})
 
 
 @pytest.mark.asyncio
@@ -167,7 +167,7 @@ async def test_tts_registry_replays_text_only_before_audio_started() -> None:
     primary = FakeTTS(fails=True)
     fallback = FakeTTS()
     registry = TTSRegistry(
-        tts_config(), {"openai/model": primary, "gradium/default": fallback}
+        tts_config(), {"huggingface/primary": primary, "huggingface/fallback": fallback}
     )
     audio: list[bytes] = []
 
@@ -190,7 +190,7 @@ async def test_tts_registry_never_duplicates_after_audio_started() -> None:
     primary = FakeTTS(fails=True, emits_before_failure=True)
     fallback = FakeTTS()
     registry = TTSRegistry(
-        tts_config(), {"openai/model": primary, "gradium/default": fallback}
+        tts_config(), {"huggingface/primary": primary, "huggingface/fallback": fallback}
     )
 
     async def chunks() -> AsyncIterator[str]:
@@ -212,7 +212,7 @@ async def test_stt_send_failure_selects_another_provider_before_retrying_failed_
 
     primary, fallback = BrokenSend(), FakeSTT()
     registry = STTRegistry(
-        stt_config(), {"openai/model": primary, "gradium/default": fallback}
+        stt_config(), {"huggingface/primary": primary, "huggingface/fallback": fallback}
     )
 
     async def callback(*args):
@@ -228,11 +228,16 @@ async def test_stt_send_failure_selects_another_provider_before_retrying_failed_
 async def test_multiple_tts_failures_preserve_text_for_last_provider():
     config = tts_config()
     config.providers.append(
-        config.providers[0].model_copy(update={"id": "openai/last"})
+        config.providers[0].model_copy(update={"id": "huggingface/last"})
     )
     first, second, last = FakeTTS(fails=True), FakeTTS(fails=True), FakeTTS()
     registry = TTSRegistry(
-        config, {"openai/model": first, "gradium/default": second, "openai/last": last}
+        config,
+        {
+            "huggingface/primary": first,
+            "huggingface/fallback": second,
+            "huggingface/last": last,
+        },
     )
 
     async def chunks():

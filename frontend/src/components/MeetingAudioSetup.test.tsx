@@ -16,7 +16,7 @@ describe("meeting sound check", () => {
         }),
     );
     render(<MeetingAudioSetup />);
-    fireEvent.click(screen.getByText("Faire entendre Atlas dans l’appel"));
+    fireEvent.click(screen.getByText("Faire entendre Quorumy dans l’appel"));
     fireEvent.click(
       screen.getByRole("button", { name: "Jouer le son de test" }),
     );
@@ -45,7 +45,7 @@ describe("meeting sound check", () => {
       new Error("No audio output"),
     );
     render(<MeetingAudioSetup />);
-    fireEvent.click(screen.getByText("Faire entendre Atlas dans l’appel"));
+    fireEvent.click(screen.getByText("Faire entendre Quorumy dans l’appel"));
     fireEvent.click(
       screen.getByRole("button", { name: "Jouer le son de test" }),
     );

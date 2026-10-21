@@ -6,10 +6,10 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from aparte.workspace.core.models import SpeechPlan
-from aparte.workspace.core.tools import ToolSpec
-from tests.workspace.test_aparte import make_engine
+from quorumy.workspace.core.models import SpeechPlan
+from quorumy.workspace.core.tools import ToolSpec
 from tests.workspace.test_engine import FakeDecision, MemoryStore, ResearchGenerator
+from tests.workspace.test_quorumy import make_engine
 
 
 async def research_engine(handler, generator=None):
@@ -53,7 +53,7 @@ async def test_timeout_cancels_provider_and_next_mission_can_succeed():
     engine, _ = await research_engine(tool)
     engine.config.policy.mission_timeout_seconds = 0.05
     try:
-        await engine.commit_utterance("Atlas, recherche la source.", source="manual")
+        await engine.commit_utterance("Quorumy, recherche la source.", source="manual")
         await asyncio.wait_for(engine.drain(), 1)
         failed = engine.state.tasks[-1]
         assert released.is_set()
@@ -63,7 +63,7 @@ async def test_timeout_cancels_provider_and_next_mission_can_succeed():
         tool.side_effect = None
         tool.return_value = {"status": "ok", "summary": "Evidence", "results": []}
         engine.config.policy.mission_timeout_seconds = 5
-        await engine.commit_utterance("Atlas, réessaie.", source="manual")
+        await engine.commit_utterance("Quorumy, réessaie.", source="manual")
         await asyncio.wait_for(engine.drain(), 1)
         assert engine.state.tasks[-1].status == "done"
         assert (
@@ -154,7 +154,7 @@ async def test_failed_research_never_becomes_successful(failure):
 
     engine, _ = await research_engine(tool, BrokenPlanner())
     try:
-        await engine.commit_utterance("Atlas, vérifie.", source="manual")
+        await engine.commit_utterance("Quorumy, vérifie.", source="manual")
         await asyncio.wait_for(engine.drain(), 1)
         task = engine.state.tasks[-1]
         assert task.status == "failed" and task.phase == "complete"
@@ -177,7 +177,7 @@ async def test_reused_result_keeps_evidence_and_does_not_call_provider_twice():
     engine, _ = await research_engine(tool)
     try:
         for _ in range(2):
-            await engine.commit_utterance("Atlas, même recherche.", source="manual")
+            await engine.commit_utterance("Quorumy, même recherche.", source="manual")
             await asyncio.wait_for(engine.drain(), 1)
         first, second = engine.state.tasks
         assert first.status == second.status == "done"
@@ -200,7 +200,7 @@ async def test_repeated_tool_selection_is_bounded_without_repeating_provider_cal
     tool = AsyncMock(return_value={"status": "ok", "summary": "Evidence"})
     engine, _ = await research_engine(tool, LoopingPlanner())
     try:
-        await engine.commit_utterance("Atlas, vérifie une source.", source="manual")
+        await engine.commit_utterance("Quorumy, vérifie une source.", source="manual")
         await asyncio.wait_for(engine.drain(), 1)
         assert tool.await_count == 1
         assert engine.state.tasks[-1].status == "failed"
@@ -211,12 +211,12 @@ async def test_repeated_tool_selection_is_bounded_without_repeating_provider_cal
 
 
 def test_queued_research_keeps_its_request_when_the_conversation_moves_on():
-    from aparte.workspace.core.models import AtlasState, Decision, Task, Utterance
+    from quorumy.workspace.core.models import Decision, QuorumyState, Task, Utterance
 
     original = Utterance(text="Vérifie la documentation de WebRTC.")
     later = Utterance(text="Et cherche aussi la météo de demain.")
-    state = AtlasState(
-        project_id="aparte", protocol_version=12, transcript=[original, later]
+    state = QuorumyState(
+        project_id="quorumy", protocol_version=12, transcript=[original, later]
     )
     engine, _ = make_engine(MemoryStore())
     task = Task(

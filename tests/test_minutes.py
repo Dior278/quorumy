@@ -1,10 +1,8 @@
 import asyncio
-import json
 
-import httpx
 import pytest
 
-from aparte.minutes import (
+from quorumy.minutes import (
     Evidence,
     ProposedMinutes,
     ProposedNote,
@@ -12,8 +10,8 @@ from aparte.minutes import (
     calendar_export,
     markdown_export,
 )
-from aparte.providers import LiveBackend, ProviderError
-from aparte.settings import AppSettings
+from quorumy.providers import LiveBackend, ProviderError
+from quorumy.settings import AppSettings
 
 UTTERANCES = [
     {
@@ -110,34 +108,21 @@ def test_markdown_separates_proposals_and_escapes_active_content():
 
 @pytest.mark.parametrize("bad", [False, True])
 def test_provider_uses_structured_schema_and_exposes_failure(bad):
-    def respond(request):
-        body = json.loads(request.content)
-        assert body["store"] is False
-        assert body["text"]["format"]["strict"] is True
-        assert json.loads(body["input"])[0]["utterance_id"] == "u1"
-        return httpx.Response(
-            200,
-            json={
-                "status": "completed",
-                "output": [
-                    {
-                        "type": "message",
-                        "content": [
-                            {
-                                "type": "output_text",
-                                "text": "{}" if bad else proposal().model_dump_json(),
-                            }
-                        ],
-                    }
-                ],
-            },
-        )
+    class MinutesGenerator:
+        available = True
+
+        async def generate(self, messages, model_id=None):
+            assert "utterance_id" in messages[-1]["content"]
+            from quorumy.workspace.core.models import LLMResult
+
+            return LLMResult(
+                content="{}" if bad else proposal().model_dump_json(),
+                model="qwen",
+                provider="huggingface",
+            )
 
     async def scenario():
-        backend = LiveBackend(
-            AppSettings(_env_file=None, openai_api_key="test"),
-            httpx.AsyncClient(transport=httpx.MockTransport(respond)),
-        )
+        backend = LiveBackend(AppSettings(_env_file=None), generator=MinutesGenerator())
         try:
             if bad:
                 with pytest.raises(ProviderError):

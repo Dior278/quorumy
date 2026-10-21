@@ -1,0 +1,71 @@
+{
+  "server": {
+    "host": "0.0.0.0",
+    "port": 8765
+  },
+  "session": {
+    "language": "fr",
+    "notes_interval_seconds": 20
+  },
+  "policy": {
+    "stable_floor_gap_seconds": 1.5,
+    "direct_floor_gap_seconds": 0.8,
+    "awaited_floor_gap_seconds": 3.0,
+    "unsolicited_speech_cooldown_seconds": 90,
+    "research_max_concurrency": 3,
+    "max_tool_steps": 4
+  },
+  "storage": {
+    "database_path": ""
+  },
+  "voice": {
+    "stt": {
+      "active": "huggingface/openai/whisper-large-v3",
+      "providers": [
+        {
+          "id": "huggingface/openai/whisper-large-v3",
+          "endpoint": "https://router.huggingface.co/hf-inference/models/openai/whisper-large-v3",
+          "secret_env": "HF_TOKEN",
+          "input_format": "pcm_24000",
+          "language": "fr"
+        }
+      ]
+    },
+    "tts": {
+      "active": "huggingface/hexgrad/Kokoro-82M",
+      "providers": [
+        {
+          "id": "huggingface/hexgrad/Kokoro-82M",
+          "endpoint": "https://router.huggingface.co/deepinfra/v1/openai/audio/speech",
+          "secret_env": "HF_TOKEN",
+          "voice_id": "ff_siwis",
+          "output_format": "wav"
+        }
+      ]
+    }
+  },
+  "llm": {
+    "roles": {
+      "speaker": "huggingface/Qwen/Qwen2.5-7B-Instruct:cheapest",
+      "worker": "huggingface/Qwen/Qwen2.5-7B-Instruct:cheapest",
+      "notes": "huggingface/Qwen/Qwen2.5-7B-Instruct:cheapest",
+      "board": "huggingface/Qwen/Qwen2.5-7B-Instruct:cheapest",
+      "naming": "huggingface/Qwen/Qwen2.5-7B-Instruct:cheapest",
+      "fallback": "huggingface/Qwen/Qwen2.5-7B-Instruct:cheapest"
+    },
+    "timeout_seconds": 30,
+    "max_request_cost_usd": 6.0,
+    "models": [
+      {
+        "id": "huggingface/Qwen/Qwen2.5-7B-Instruct:cheapest",
+        "endpoint": "https://router.huggingface.co/v1/chat/completions",
+        "transport": "chat_completions",
+        "secret_env": "HF_TOKEN",
+        "max_output_tokens": 4096,
+        "max_concurrency": 4,
+        "input_usd_per_million_tokens": 0.2,
+        "output_usd_per_million_tokens": 0.6
+      }
+    ]
+  }
+}

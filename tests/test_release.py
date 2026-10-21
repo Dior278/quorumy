@@ -38,11 +38,11 @@ def test_archive_excludes_local_state_and_has_verified_manifest(checkout):
         assert not any(
             marker.encode() in archive.read(name) for name in archive.namelist()
         )
-        for line in archive.read("atlas/MANIFEST.sha256").decode().splitlines():
+        for line in archive.read("quorumy/MANIFEST.sha256").decode().splitlines():
             digest, name = line.split("  ", 1)
-            assert hashlib.sha256(archive.read("atlas/" + name)).hexdigest() == digest
-        assert "atlas/.env.example" in archive.namelist()
-        assert "atlas/.github/workflows/quality.yml" in archive.namelist()
+            assert hashlib.sha256(archive.read("quorumy/" + name)).hexdigest() == digest
+        assert "quorumy/.env.example" in archive.namelist()
+        assert "quorumy/.github/workflows/quality.yml" in archive.namelist()
     with pytest.raises(FileExistsError):
         build_archive(checkout, target)
 

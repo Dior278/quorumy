@@ -1,4 +1,4 @@
-from aparte.workspace.core.voice import spoken_text
+from quorumy.workspace.core.voice import spoken_text
 
 
 def test_spoken_text_removes_visual_markup() -> None:
@@ -9,4 +9,4 @@ def test_spoken_text_removes_visual_markup() -> None:
 
 
 def test_spoken_text_rejects_structured_tool_output() -> None:
-    assert spoken_text('{"tool_call":{"name":"exa_search","arguments":{}}}') == ""
+    assert spoken_text('{"tool_call":{"name":"research_web","arguments":{}}}') == ""

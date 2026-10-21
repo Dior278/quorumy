@@ -1,16 +1,16 @@
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { BookOpenText } from "lucide-react";
-import type { AtlasState } from "../protocol";
+import type { QuorumyState } from "../protocol";
 
-export function NotesView({ state }: { state: AtlasState }) {
+export function NotesView({ state }: { state: QuorumyState }) {
   if (!state.notes) {
     return (
       <div className="empty notes-empty">
         <BookOpenText />
         <h2>Un espace pour vos idées.</h2>
         <p>
-          Parlez ou écrivez. Atlas organise vos notes dès qu’une idée se
+          Parlez ou écrivez. Quorumy organise vos notes dès qu’une idée se
           précise.
         </p>
       </div>

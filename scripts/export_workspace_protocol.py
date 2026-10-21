@@ -5,7 +5,7 @@ from pathlib import Path
 
 from fastapi import FastAPI
 
-from aparte.workspace.api.schemas import BootstrapResponse, ProtocolDocument
+from quorumy.workspace.api.schemas import BootstrapResponse, ProtocolDocument
 
 app = FastAPI()
 

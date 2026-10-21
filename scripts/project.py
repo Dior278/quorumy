@@ -27,14 +27,14 @@ def setup() -> None:
     run("bun", "run", "--cwd", "frontend", "build")
     if not any((ROOT / name).exists() for name in (".env", ".Secrets")):
         shutil.copyfile(ROOT / ".env.example", ROOT / ".env")
-        print(".env créé : renseignez OPENAI_API_KEY pour utiliser l’IA.")
+        print(".env créé : renseignez HF_TOKEN, ou la clé dans le compte Quorumy.")
     run("uv", "run", "--locked", "python", "scripts/project.py", "doctor")
-    print("Installation terminée. Lancer : uv run --locked aparte")
+    print("Installation terminée. Lancer : uv run --locked quorumy")
 
 
 def doctor() -> None:
-    from aparte.settings import AppSettings
-    from aparte.workspace.config import load_config, load_product
+    from quorumy.settings import AppSettings
+    from quorumy.workspace.config import load_config, load_product
 
     for name in ("uv", "bun", "node"):
         run(name, "--version")
@@ -49,19 +49,16 @@ def doctor() -> None:
             f"Configuration invalide ({type(exc).__name__}). "
             "Comparer .env et .data/config.json aux exemples documentés."
         ) from None
-    frontend = Path(os.environ.get("APARTE_FRONTEND_DIR", ROOT / "frontend/dist"))
+    frontend = Path(os.environ.get("QUORUMY_FRONTEND_DIR", ROOT / "frontend/dist"))
     if not (frontend / "index.html").is_file():
         raise RuntimeError("Interface absente. Exécuter : bun run --cwd frontend build")
     print("Configuration et interface compilée : OK")
-    print("OpenAI : " + ("clé présente" if settings.openai_token else "clé absente"))
     print(
-        "Gradium : "
-        + ("clé présente" if settings.key("gradium_api_key") else "clé absente")
+        "Hugging Face : "
+        + ("clé présente" if settings.key("hf_token") else "clé absente")
     )
     print("Les clés présentes ne sont pas testées auprès des fournisseurs.")
-    print(
-        "Sans clé OpenAI, l’interface fonctionne mais les fonctions IA sont indisponibles."
-    )
+    print("Sans clé Hugging Face, le compte peut encore en fournir une.")
 
 
 def check() -> None:

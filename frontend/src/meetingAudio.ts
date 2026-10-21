@@ -1,4 +1,4 @@
-/** A short local signal, carried by the same browser tab as Atlas's voice. */
+/** A short local signal, carried by the same browser tab as Quorumy's voice. */
 export async function playMeetingTestSound(): Promise<void> {
   const context = new AudioContext();
   let source: AudioBufferSourceNode | undefined;

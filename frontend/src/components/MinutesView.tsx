@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { AtlasState } from "../protocol";
+import type { QuorumyState } from "../protocol";
 import { request as apiRequest, download } from "../api";
 
 type Note = {
@@ -29,7 +29,7 @@ const labels: Record<string, string> = {
   rejected: "Écarté",
 };
 
-export function MinutesView({ state }: { state: AtlasState }) {
+export function MinutesView({ state }: { state: QuorumyState }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const board = state.minutes as Board | null;
@@ -90,7 +90,7 @@ export function MinutesView({ state }: { state: AtlasState }) {
             onClick={() =>
               void download(
                 `/v1/sessions/${state.session_id}/minutes/md`,
-                "atlas-engagements.md",
+                "quorumy-engagements.md",
               ).catch((e) => setError(String(e)))
             }
           >
@@ -101,7 +101,7 @@ export function MinutesView({ state }: { state: AtlasState }) {
               onClick={() =>
                 void download(
                   `/v1/sessions/${state.session_id}/minutes/ics`,
-                  "atlas-actions.ics",
+                  "quorumy-actions.ics",
                 ).catch((e) => setError(String(e)))
               }
             >

@@ -24,30 +24,30 @@ export function MeetingAudioSetup() {
   return (
     <details className="meeting-audio">
       <summary>
-        <Volume2 size={16} /> Faire entendre Atlas dans l’appel
+        <Volume2 size={16} /> Faire entendre Quorumy dans l’appel
       </summary>
       <div className="meeting-audio-body">
         <p>
-          Vous entendez Atlas sur cet ordinateur. Pour le faire entendre aux
+          Vous entendez Quorumy sur cet ordinateur. Pour le faire entendre aux
           participants, activez aussi le partage de son dans la réunion.
           Utilisez un casque.
         </p>
         <ol>
           <li>
-            <strong>L’appel → Atlas.</strong> Choisissez « Microphone + audio
+            <strong>L’appel → Quorumy.</strong> Choisissez « Microphone + audio
             partagé ». Au démarrage, sélectionnez l’onglet de la réunion avec
             son audio.
           </li>
           <li>
-            <strong>Atlas → l’appel.</strong> Dans Teams sur le web : Partager →
-            Écran, fenêtre ou onglet → Onglet. Sélectionnez Atlas2 et activez «
-            Partager aussi l’audio de l’onglet ». Dans Meet : Présenter → Un
+            <strong>Quorumy → l’appel.</strong> Dans Teams sur le web : Partager
+            → Écran, fenêtre ou onglet → Onglet. Sélectionnez Quorumy et activez
+            « Partager aussi l’audio de l’onglet ». Dans Meet : Présenter → Un
             onglet, avec son audio.
           </li>
           <li>
             <strong>Vérifiez ensemble.</strong> Jouez le son ci-dessous et
-            faites confirmer sa réception par un participant. Gardez la voix
-            d’Atlas activée.
+            faites confirmer sa réception par un participant. Gardez la voix de
+            Quorumy activée.
           </li>
         </ol>
         <button type="button" onClick={testSound} disabled={testing}>
@@ -67,8 +67,8 @@ export function MeetingAudioSetup() {
         )}
         <p className="meeting-audio-help">
           Choisissez l’onglet de la réunion pour l’écoute, pas tout le son de
-          l’ordinateur : Atlas risquerait de s’entendre. Le partage vers l’appel
-          se règle dans votre plateforme.
+          l’ordinateur : Quorumy risquerait de s’entendre. Le partage vers
+          l’appel se règle dans votre plateforme.
         </p>
         <p className="meeting-audio-links">
           Guides audio :{" "}

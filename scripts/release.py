@@ -146,14 +146,14 @@ def build_archive(root: Path, output: Path) -> Path:
             relative = path.relative_to(root).as_posix()
             content = path.read_bytes()
             entry = zipfile.ZipInfo(
-                "atlas/" + relative, date_time=(2026, 1, 1, 0, 0, 0)
+                "quorumy/" + relative, date_time=(2026, 1, 1, 0, 0, 0)
             )
             entry.compress_type = zipfile.ZIP_DEFLATED
             entry.external_attr = 0o100644 << 16
             archive.writestr(entry, content)
             manifest.append(f"{hashlib.sha256(content).hexdigest()}  {relative}")
         entry = zipfile.ZipInfo(
-            "atlas/MANIFEST.sha256", date_time=(2026, 1, 1, 0, 0, 0)
+            "quorumy/MANIFEST.sha256", date_time=(2026, 1, 1, 0, 0, 0)
         )
         entry.compress_type = zipfile.ZIP_DEFLATED
         entry.external_attr = 0o100644 << 16
@@ -169,7 +169,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--check", action="store_true")
     parser.add_argument(
-        "--output", type=Path, default=ROOT / "release/atlas-source.zip"
+        "--output", type=Path, default=ROOT / "release/quorumy-source.zip"
     )
     args = parser.parse_args()
     try:

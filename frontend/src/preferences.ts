@@ -1,4 +1,4 @@
-const PROMPT_BAR_KEY = "atlas.promptBarVisible";
+const PROMPT_BAR_KEY = "quorumy.promptBarVisible";
 
 export function promptBarVisibleByDefault(
   storage: Pick<Storage, "getItem"> = localStorage,

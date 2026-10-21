@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import type { AtlasState } from "../protocol";
+import type { QuorumyState } from "../protocol";
 import { Board, Transcript } from "./WorkspaceViews";
 
 const base = {
@@ -8,7 +8,7 @@ const base = {
   speeches: [],
   tasks: [],
   cards: [],
-} as unknown as AtlasState;
+} as unknown as QuorumyState;
 
 describe("Meeting evidence", () => {
   it("distinguishes interrupted and text-only answers from canceled voice drafts", () => {
@@ -55,7 +55,7 @@ describe("Meeting evidence", () => {
           error: "duplicate",
         },
       ],
-    } as AtlasState;
+    } as QuorumyState;
     render(<Transcript state={state} partial="" />);
     expect(screen.getByText("Réponse terminée")).toBeTruthy();
     expect(screen.getByText("Interrompue · texte préparé")).toBeTruthy();
@@ -87,7 +87,7 @@ describe("Meeting evidence", () => {
           },
         },
       ],
-    } as unknown as AtlasState;
+    } as unknown as QuorumyState;
     render(<Board state={state} />);
     expect(
       screen
@@ -96,7 +96,7 @@ describe("Meeting evidence", () => {
     ).toBe("https://example.org/notice");
   });
 
-  it("shows the question and distinct safe research sources under Atlas's answer", () => {
+  it("shows the question and distinct safe research sources under Quorumy's answer", () => {
     const state = {
       ...base,
       transcript: [
@@ -134,7 +134,7 @@ describe("Meeting evidence", () => {
           },
         },
       ],
-    } as unknown as AtlasState;
+    } as unknown as QuorumyState;
     render(<Transcript state={state} partial="" />);
     fireEvent.click(screen.getByText("Origine de cette réponse"));
     expect(screen.getByText("Sources consultées · 1")).toBeTruthy();

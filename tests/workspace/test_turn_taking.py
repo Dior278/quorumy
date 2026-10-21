@@ -6,8 +6,8 @@ import asyncio
 
 import pytest
 
-from aparte.workspace.core.models import Decision, Speech
-from aparte.workspace.core.speech import SpeechGate
+from quorumy.workspace.core.models import Decision, Speech
+from quorumy.workspace.core.speech import SpeechGate
 from tests.workspace.test_engine import (
     FakeDecision,
     FakeGenerator,
@@ -106,7 +106,8 @@ async def test_barge_in_stops_result_generation_and_late_playback_cannot_revive_
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
-    "addressee,timing", [("room", "next_gap"), ("atlas", "silent"), ("atlas", "later")]
+    "addressee,timing",
+    [("room", "next_gap"), ("quorumy", "silent"), ("quorumy", "later")],
 )
 async def test_room_questions_and_deferred_answers_do_not_trigger_voice(
     addressee, timing
@@ -138,7 +139,7 @@ async def test_room_questions_and_deferred_answers_do_not_trigger_voice(
 @pytest.mark.asyncio
 async def test_short_silences_never_bypass_the_configured_gap(monkeypatch):
     clock = [100.0]
-    monkeypatch.setattr("aparte.workspace.core.engine.monotonic", lambda: clock[0])
+    monkeypatch.setattr("quorumy.workspace.core.engine.monotonic", lambda: clock[0])
     engine = build_engine(FakeDecision(), FakeGenerator(), [])
     await engine.start()
     await engine.start_session({})
@@ -165,12 +166,12 @@ async def test_short_silences_never_bypass_the_configured_gap(monkeypatch):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("human_resumes", [False, True])
-async def test_awaited_help_needs_three_seconds_and_yields_to_a_human(
+async def test_uninvited_help_raises_a_hand_instead_of_speaking(
     monkeypatch, human_resumes
 ):
     clock = [100.0]
-    monkeypatch.setattr("aparte.workspace.core.engine.monotonic", lambda: clock[0])
-    monkeypatch.setattr("aparte.workspace.core.speech.monotonic", lambda: clock[0])
+    monkeypatch.setattr("quorumy.workspace.core.engine.monotonic", lambda: clock[0])
+    monkeypatch.setattr("quorumy.workspace.core.speech.monotonic", lambda: clock[0])
     messages = []
     decision = SequenceDecision(
         [
@@ -192,22 +193,20 @@ async def test_awaited_help_needs_three_seconds_and_yields_to_a_human(
             "On attend une piste pour débloquer ce problème.", source="manual"
         )
         async with asyncio.timeout(1):
-            while not engine.state.speeches:
+            while engine.state.hand.level == "idle":
                 await asyncio.sleep(0)
         await engine.floor_changed(False)
         clock[0] += 2.9
         engine._floor_changed_event.set()
         await asyncio.sleep(0.02)
-        assert not any(m.get("type") == "speech.authorized" for m in messages)
         if human_resumes:
             await engine.floor_changed(True)
         clock[0] += 0.2
         engine._floor_changed_event.set()
         await asyncio.wait_for(engine.drain(), 1)
-        offered = [m for m in messages if m.get("type") == "speech.authorized"]
-        assert len(offered) == (0 if human_resumes else 1)
-        if offered:
-            assert offered[0]["reason"] == "awaited_response"
+        assert not any(m.get("type") == "speech.authorized" for m in messages)
+        assert engine.state.hand.level == "raised"
+        assert engine.state.hand.pending_text
         assert not any(m.get("type") == "presence.cue" for m in messages)
     finally:
         await engine.stop()
@@ -221,7 +220,7 @@ async def test_cooldown_limits_unsolicited_help_but_allows_an_invitation(invited
         [
             Decision(
                 route="respond",
-                addressee="atlas" if invited else "room",
+                addressee="quorumy" if invited else "room",
                 initiative="assigned" if invited else "proactive",
                 speech_depth="brief",
                 timing="next_gap" if invited else "later",
@@ -237,14 +236,15 @@ async def test_cooldown_limits_unsolicited_help_but_allows_an_invitation(invited
     )
     try:
         await engine.commit_utterance(
-            "Atlas, à toi." if invited else "On attend encore une piste.",
+            "Quorumy, à toi." if invited else "On attend encore une piste.",
             source="manual",
         )
         await asyncio.wait_for(engine.drain(), 1)
         offered = [m for m in messages if m.get("type") == "speech.authorized"]
         assert bool(offered) == invited
         if not invited:
-            assert engine.state.speeches[-1].error == "proactive_cooldown"
+            assert engine.state.hand.level == "raised"
+            assert not engine.state.speeches
     finally:
         await engine.stop()
 

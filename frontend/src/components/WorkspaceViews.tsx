@@ -1,18 +1,18 @@
-import type { AtlasState } from "../protocol";
+import type { QuorumyState } from "../protocol";
 type AudioStatus = "idle" | "requesting" | "active" | "paused" | "error";
 const WAVE_SHAPE = [
   0.45, 0.7, 1, 0.6, 0.85, 0.5, 0.95, 0.65, 0.8, 0.4, 0.75, 0.55,
 ];
 
-export function Board({ state }: { state: AtlasState }) {
+export function Board({ state }: { state: QuorumyState }) {
   if (!state.cards.length)
     return (
       <div className="empty">
         <span>01</span>
         <h2>Les idées prennent place ici.</h2>
         <p>
-          Atlas rassemble les idées, les décisions et les résultats de recherche
-          au fil de la discussion.
+          Quorumy rassemble les idées, les décisions et les résultats de
+          recherche au fil de la discussion.
         </p>
       </div>
     );
@@ -44,7 +44,7 @@ export function Transcript({
   state,
   partial,
 }: {
-  state: AtlasState;
+  state: QuorumyState;
   partial: string;
 }) {
   const entries = [
@@ -67,7 +67,7 @@ export function Transcript({
       .map((s) => ({
         id: s.id,
         at: s.playback_started_at ?? s.created_at,
-        speaker: "Atlas",
+        speaker: "Quorumy",
         text: s.text,
         assistant: true,
         sourceIds: s.source_ids ?? [],
@@ -86,8 +86,8 @@ export function Transcript({
       <div className="empty">
         <h2>La conversation commence ici.</h2>
         <p>
-          Les paroles transcrites et les réponses d’Atlas restent consultables
-          pendant la session.
+          Les paroles transcrites et les réponses de Quorumy restent
+          consultables pendant la session.
         </p>
       </div>
     );
@@ -137,7 +137,7 @@ function Sources({
   ids,
   className = "card-sources",
 }: {
-  state: AtlasState;
+  state: QuorumyState;
   ids: string[];
   className?: string;
 }) {
@@ -209,7 +209,7 @@ export function ActivityStrip({
   audioStatus,
   audioLevel,
 }: {
-  state: AtlasState;
+  state: QuorumyState;
   partial: string;
   audioStatus: AudioStatus;
   audioLevel: number;
@@ -234,11 +234,11 @@ export function ActivityStrip({
     "minutes.generated": "Les engagements sont prêts à être relus.",
     "minutes.reviewed": "Votre relecture est enregistrée.",
     "voice.muted": "La voix est coupée. Les réponses restent écrites.",
-    "voice.active": "La voix d’Atlas est activée.",
+    "voice.active": "La voix de Quorumy est activée.",
   };
   const activity = latest
     ? (labels[latest.kind] ?? latest.summary)
-    : "Atlas est prêt. La conversation peut commencer.";
+    : "Quorumy est prêt. La conversation peut commencer.";
   return (
     <footer>
       <div className="audio-monitor" aria-label={`Microphone ${audioStatus}`}>

@@ -1,14 +1,9 @@
-import type { AtlasState } from "../protocol";
+import type { QuorumyState } from "../protocol";
 
-type Task = AtlasState["tasks"][number];
+type Task = QuorumyState["tasks"][number];
 
 const tools: Record<string, string> = {
   research_web: "Recherche web",
-  exa_search: "Recherche web",
-  research_weather: "Météo",
-  research_dust: "Documents internes",
-  research_pipelex: "Comparaison",
-  jinko_flight_calendar: "Recherche de vols",
   system_capabilities: "Outils disponibles",
   pending_selection: "Demande de recherche",
 };

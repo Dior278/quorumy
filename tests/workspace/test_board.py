@@ -4,18 +4,18 @@ from pathlib import Path
 
 import pytest
 
-from aparte.workspace.config import AppConfig
-from aparte.workspace.core.coordinator import Coordinator
-from aparte.workspace.core.models import (
-    AtlasState,
+from quorumy.workspace.config import AppConfig
+from quorumy.workspace.core.coordinator import Coordinator
+from quorumy.workspace.core.models import (
     BoardConcept,
     BoardMergeEvidence,
     BoardProposal,
     BoardRetirement,
     Card,
     LLMResult,
+    QuorumyState,
 )
-from aparte.workspace.core.tools import ToolRegistry
+from quorumy.workspace.core.tools import ToolRegistry
 
 
 class BoardGenerator:
@@ -192,7 +192,7 @@ async def test_curator_review_merges_overlap_before_reconciliation() -> None:
     config_path = (
         Path(__file__).resolve().parents[2]
         / "src"
-        / "aparte"
+        / "quorumy"
         / "workspace"
         / "default_config.json"
     )
@@ -237,8 +237,8 @@ async def test_curator_review_merges_overlap_before_reconciliation() -> None:
     coordinator = Coordinator(
         generator, ToolRegistry(1), config.policy, config.llm.roles
     )
-    state = AtlasState(
-        project_id="atlas",
+    state = QuorumyState(
+        project_id="quorumy",
         protocol_version=1,
         cards=[
             card(

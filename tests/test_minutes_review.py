@@ -1,6 +1,6 @@
 import pytest
 
-from aparte.minutes import Evidence, ProposedMinutes, ProposedNote, build_minutes
+from quorumy.minutes import Evidence, ProposedMinutes, ProposedNote, build_minutes
 
 
 @pytest.mark.parametrize("changed", [False, True])

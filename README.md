@@ -1,28 +1,31 @@
-# Atlas2
+# Quorumy
 
-Un assistant de réunion qui prend des notes, effectue des recherches sourcées et transforme les échanges en actions à valider.
+Un coéquipier de réunion. Il garde le fil, cherche, repère les incohérences, et ne parle que lorsque la parole lui est donnée. S’il a quelque chose d’urgent, il lève la main.
 
 ## Démarrer
 
 Prérequis : [uv](https://docs.astral.sh/uv/getting-started/installation/), [Bun](https://bun.sh/docs/installation) et [Node.js 24](https://nodejs.org/en/download). uv installe Python si nécessaire.
 
 ```sh
-git clone https://github.com/Dior278/Atlas2.git
-cd Atlas2
+git clone https://github.com/Dior278/quorumy.git
+cd quorumy
 uv run --locked python scripts/project.py setup
+uv run --locked quorumy
 ```
 
-Dans le fichier `.env` créé, renseigner `OPENAI_API_KEY`. Ajouter `GRADIUM_API_KEY` pour la voix. Les autres intégrations sont facultatives : voir [.env.example](.env.example).
+Le serveur écoute sur toutes les interfaces, port **8765**. Ouvrez l’adresse de la machine, par exemple http://127.0.0.1:8765/.
 
-```sh
-uv run --locked aparte
-```
+Créez un compte avec une [clé Hugging Face](https://huggingface.co/settings/tokens) autorisée à appeler les Inference Providers. Le modèle par défaut est `Qwen/Qwen2.5-7B-Instruct:cheapest`. Vous pouvez le remplacer par n’importe quel modèle de chat du routeur, avec `:cheapest`, `:fastest` ou `:preferred`.
 
-Ouvrir **http://127.0.0.1:8765/**, choisir Texte ou Microphone et démarrer après accord des participants.
+La clé reste sur le serveur. Quorumy parle avec Kokoro (`hexgrad/Kokoro-82M`) et écoute avec Whisper, les deux via cette clé. La voix suit la langue de la réunion : française par défaut (`ff_siwis`).
 
-Pendant la réunion : consulter les notes, demander une recherche à Atlas, puis relire et confirmer les engagements. Les sessions sont sauvegardées localement ; les exports Markdown et calendrier restent disponibles.
+Pour limiter l’accès à cette machine : `QUORUMY_AUTH=off uv run --locked quorumy --host 127.0.0.1`.
 
-Pour faire entendre Atlas dans un appel, suivre le [guide audio](docs/demo-video.md).
+## Pendant la réunion
+
+Démarrez après accord des participants. Quorumy prend des notes et peut lancer une recherche pendant que la conversation continue. Il répond quand on s’adresse à lui (« Quorumy, à toi »). Sinon il lève la main : l’icône clignote en rouge quand le point est urgent. Quelqu’un lui donne alors la parole.
+
+Les engagements se relisent et se confirment avant l’export. Ceux qui sont confirmés reviennent à la réunion suivante. Si un chiffre ou une décision les contredit, Quorumy lève la main en rouge. Les sessions sont enregistrées sur le serveur.
 
 ## Vérifier
 
@@ -31,7 +34,7 @@ uv run --locked python scripts/project.py doctor
 uv run --locked python scripts/project.py check
 ```
 
-`doctor` vérifie la configuration ; `check` lance les tests et la compilation sans clé API. L’utilisation réelle de l’IA nécessite des crédits chez les fournisseurs configurés.
+`doctor` vérifie la configuration ; `check` lance les tests et la compilation sans clé API.
 
 ## Documentation
 

@@ -6,10 +6,10 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import type { CaptureMode } from "../audio";
-import type { AtlasLanguage, SessionSummary } from "../protocol";
+import type { QuorumyLanguage, SessionSummary } from "../protocol";
 import { MeetingAudioSetup } from "./MeetingAudioSetup";
 
-export const LANGUAGES: Array<{ value: AtlasLanguage; label: string }> = [
+export const LANGUAGES: Array<{ value: QuorumyLanguage; label: string }> = [
   { value: "fr", label: "Français" },
   { value: "en", label: "English" },
   { value: "es", label: "Español" },
@@ -41,14 +41,14 @@ export function Consent({
 
 type Props = {
   sessions: SessionSummary[];
-  language: AtlasLanguage;
+  language: QuorumyLanguage;
   captureMode: CaptureMode;
   consent: boolean;
   connected: boolean;
   starting: boolean;
   error: string;
   onConsent: (value: boolean) => void;
-  onLanguage: (value: AtlasLanguage) => void;
+  onLanguage: (value: QuorumyLanguage) => void;
   onCapture: (value: CaptureMode) => void;
   onStart: () => void;
   onOpen: (id: string) => void;
@@ -60,6 +60,10 @@ type Props = {
 export function SessionHome(p: Props) {
   const systemSupported =
     typeof navigator.mediaDevices?.getDisplayMedia === "function";
+  const openCommitments = p.sessions.reduce(
+    (count, session) => count + (session.open_commitments ?? 0),
+    0,
+  );
   return (
     <section className="home-shell">
       <div className="home-hero">
@@ -73,8 +77,8 @@ export function SessionHome(p: Props) {
             <em>Une longueur d’avance.</em>
           </h1>
           <p className="hero-description">
-            Vous faites avancer les idées. Atlas garde le fil, creuse les
-            questions et rassemble ce qui compte.
+            Vous faites avancer les idées. Quorumy garde le fil, vérifie ce qui
+            se dit et ne parle que lorsque la parole lui est donnée.
           </p>
           <div className="hero-caption">
             <span className="caption-line" /> À vos côtés, sans rejoindre
@@ -83,14 +87,14 @@ export function SessionHome(p: Props) {
         </div>
         <div className="launch-card">
           <div className="launch-card-heading">
-            <div className="atlas-orbit">
-              <img src="/atlas-mark.svg" alt="" />
+            <div className="quorumy-orbit">
+              <img src="/quorumy-mark.svg" alt="" />
             </div>
             <span>VOTRE PROCHAINE CONVERSATION</span>
           </div>
-          <h2>Faites une place à Atlas.</h2>
+          <h2>Faites une place à Quorumy.</h2>
           <p>
-            Ouvrez votre réunion habituelle, puis choisissez ce qu’Atlas peut
+            Ouvrez votre réunion habituelle, puis choisissez ce que Quorumy peut
             écouter.
           </p>
           <label>
@@ -121,7 +125,9 @@ export function SessionHome(p: Props) {
               Langue de la session
               <select
                 value={p.language}
-                onChange={(e) => p.onLanguage(e.target.value as AtlasLanguage)}
+                onChange={(e) =>
+                  p.onLanguage(e.target.value as QuorumyLanguage)
+                }
               >
                 {LANGUAGES.map((l) => (
                   <option key={l.value} value={l.value}>
@@ -181,6 +187,13 @@ export function SessionHome(p: Props) {
           </div>
         </article>
       </div>
+      {openCommitments > 0 && (
+        <p className="memory-banner">
+          {openCommitments > 1
+            ? `${openCommitments} engagements confirmés vous attendent. La prochaine réunion commencera avec eux.`
+            : `${openCommitments} engagement confirmé vous attend. La prochaine réunion commencera avec eux.`}
+        </p>
+      )}
       <section className="session-library" aria-label="Sessions enregistrées">
         <div className="session-library-heading">
           <div>
@@ -244,8 +257,7 @@ export function SessionHome(p: Props) {
         )}
       </section>
       <p className="home-credit">
-        Atlas · Construit ensemble à partir d’Atlas et des contributions
-        d’Aparté.
+        Quorumy suit la réunion et lève la main quand quelque chose urge.
       </p>
     </section>
   );

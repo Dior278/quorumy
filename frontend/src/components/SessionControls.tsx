@@ -12,19 +12,19 @@ import {
   VolumeX,
 } from "lucide-react";
 
-import type { AtlasLanguage } from "../protocol";
+import type { QuorumyLanguage } from "../protocol";
 import { MeetingAudioSetup } from "./MeetingAudioSetup";
 
 type Props = {
-  language: AtlasLanguage;
-  languages: Array<{ value: AtlasLanguage; label: string }>;
+  language: QuorumyLanguage;
+  languages: Array<{ value: QuorumyLanguage; label: string }>;
   canCurate: boolean;
   curatorRunning: boolean;
   voiceMode: "active" | "muted";
   subtitlesEnabled: boolean;
   promptBarVisible: boolean;
   listening: boolean;
-  onLanguage: (language: AtlasLanguage) => void;
+  onLanguage: (language: QuorumyLanguage) => void;
   onCurate: () => void;
   onToggleVoice: () => void;
   onToggleSubtitles: () => void;
@@ -58,7 +58,7 @@ export function SessionControls(p: Props) {
             Langue
             <select
               value={p.language}
-              onChange={(e) => p.onLanguage(e.target.value as AtlasLanguage)}
+              onChange={(e) => p.onLanguage(e.target.value as QuorumyLanguage)}
             >
               {p.languages.map((l) => (
                 <option key={l.value} value={l.value}>

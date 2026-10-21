@@ -32,6 +32,6 @@ jobs:
       - name: Install Chromium
         run: uv run --locked --group browser playwright install --with-deps chromium
       - name: Browser acceptance with synthetic providers
-        run: uv run --locked --group browser python scripts/check_atlas_browser.py
+        run: uv run --locked --group browser python scripts/check_quorumy_browser.py
       - name: Verify source archive generation
         run: uv run --locked python scripts/release.py

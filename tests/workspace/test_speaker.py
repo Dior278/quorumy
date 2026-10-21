@@ -6,8 +6,8 @@ from typing import cast
 
 import pytest
 
-from aparte.workspace.core.models import AtlasState, Decision, LLMResult, Utterance
-from aparte.workspace.core.speaker import SpeakerAgent
+from quorumy.workspace.core.models import Decision, LLMResult, QuorumyState, Utterance
+from quorumy.workspace.core.speaker import SpeakerAgent
 
 
 class VerboseGenerator:
@@ -30,7 +30,7 @@ class LongSentenceGenerator(VerboseGenerator):
     ) -> AsyncIterator[str]:
         yield (
             "A long answer can contain substantial context and several clauses without becoming multiple "
-            "spoken sentences, so Atlas must wait for the actual semantic boundary before counting it. "
+            "spoken sentences, so Quorumy must wait for the actual semantic boundary before counting it. "
             "Second complete sentence. Third detail."
         )
 
@@ -44,10 +44,13 @@ async def test_brief_speech_plan_emits_complete_bounded_turn() -> None:
 
     speaker = SpeakerAgent(VerboseGenerator())
     result = await speaker.stream_answer(
-        AtlasState(project_id="atlas", protocol_version=1),
-        Utterance(text="Atlas, summarize."),
+        QuorumyState(project_id="quorumy", protocol_version=1),
+        Utterance(text="Quorumy, summarize."),
         Decision(
-            route="respond", addressee="atlas", speech_depth="brief", timing="next_gap"
+            route="respond",
+            addressee="quorumy",
+            speech_depth="brief",
+            timing="next_gap",
         ),
         on_phrase,
     )
@@ -64,10 +67,13 @@ async def test_long_sentence_is_never_split_by_character_count() -> None:
 
     speaker = SpeakerAgent(LongSentenceGenerator())
     result = await speaker.stream_answer(
-        AtlasState(project_id="atlas", protocol_version=1),
-        Utterance(text="Atlas, explain this briefly."),
+        QuorumyState(project_id="quorumy", protocol_version=1),
+        Utterance(text="Quorumy, explain this briefly."),
         Decision(
-            route="respond", addressee="atlas", speech_depth="brief", timing="next_gap"
+            route="respond",
+            addressee="quorumy",
+            speech_depth="brief",
+            timing="next_gap",
         ),
         on_phrase,
     )
@@ -114,10 +120,10 @@ def test_research_projection_keeps_verified_summary_and_evidence():
 
 
 def test_canceled_voice_draft_is_not_presented_as_a_delivered_answer():
-    from aparte.workspace.core.models import Speech
+    from quorumy.workspace.core.models import Speech
 
-    state = AtlasState(
-        project_id="atlas",
+    state = QuorumyState(
+        project_id="quorumy",
         protocol_version=12,
         speeches=[
             Speech(text="Annulé", reason="direct_address", status="canceled"),

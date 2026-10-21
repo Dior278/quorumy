@@ -2,8 +2,8 @@ from datetime import UTC, datetime, timedelta
 
 import pytest
 
-from aparte.workspace.core.models import Speech
-from aparte.workspace.echo import remove_playback_echo
+from quorumy.workspace.core.models import Speech
+from quorumy.workspace.echo import remove_playback_echo
 
 NOW = datetime(2026, 1, 1, tzinfo=UTC)
 REPLY = (

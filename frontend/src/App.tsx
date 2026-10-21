@@ -3,14 +3,16 @@ import {
   CheckCheck,
   ArrowLeft,
   FileText,
+  Hand,
   MessageSquareText,
   Send,
   Workflow,
 } from "lucide-react";
 import { send } from "./api";
+import { AccountGate } from "./components/AccountGate";
 import { SessionHome, Consent, LANGUAGES } from "./components/SessionHome";
 import { MinutesView } from "./components/MinutesView";
-import { AtlasSubtitles } from "./components/AtlasSubtitles";
+import { QuorumySubtitles } from "./components/QuorumySubtitles";
 import { NotesView } from "./components/NotesView";
 import { SessionControls } from "./components/SessionControls";
 import {
@@ -19,7 +21,7 @@ import {
 } from "./components/WorkspaceNavigation";
 import { WorkflowCanvas } from "./components/WorkflowCanvas";
 import { Board, Transcript, ActivityStrip } from "./components/WorkspaceViews";
-import { useAtlas } from "./hooks/useAtlas";
+import { useQuorumy } from "./hooks/useQuorumy";
 export function App() {
   const {
     state,
@@ -48,6 +50,8 @@ export function App() {
     resumePrompt,
     setResumePrompt,
     starting,
+    needsAccount,
+    authenticate,
     socketRef,
     start,
     command,
@@ -59,7 +63,9 @@ export function App() {
     inject,
     toggleSubtitles,
     togglePromptBar,
-  } = useAtlas();
+  } = useQuorumy();
+  if (needsAccount)
+    return <AccountGate error={error} onSubmit={authenticate} />;
   if (!state)
     return (
       <main className="loading">{error || `Connexion à ${displayName}…`}</main>
@@ -93,12 +99,12 @@ export function App() {
               <ArrowLeft size={18} />
             </button>
           )}
-          <img src="/atlas-mark.svg" alt="" />
+          <img src="/quorumy-mark.svg" alt="" />
           <div>
             <strong>{inSession ? state.title : displayName}</strong>
             <small>
               {inSession
-                ? `Atlas · ${listening ? "En cours" : "En pause"}`
+                ? `Quorumy · ${listening ? "En cours" : "En pause"}`
                 : "Votre coéquipier de réunion"}
             </small>
           </div>
@@ -111,6 +117,37 @@ export function App() {
           />
         )}
         <div className="header-actions">
+          {(state.hand?.level === "raised" ||
+            state.hand?.level === "urgent") && (
+            <div className="hand-wrap">
+              <button
+                type="button"
+                className={
+                  state.hand.level === "urgent"
+                    ? "hand-signal urgent"
+                    : "hand-signal"
+                }
+                title={state.hand.summary || "Quorumy demande la parole"}
+                onClick={() => {
+                  const socket = socketRef.current;
+                  if (socket) send(socket, { type: "floor.grant" });
+                }}
+              >
+                <Hand size={18} />
+                {state.hand.level === "urgent" ? "Urgent" : "Parole"}
+              </button>
+              <button
+                type="button"
+                className="text-button"
+                onClick={() => {
+                  const socket = socketRef.current;
+                  if (socket) send(socket, { type: "floor.dismiss" });
+                }}
+              >
+                Plus tard
+              </button>
+            </div>
+          )}
           {state.session_status !== "idle" &&
             state.session_status !== "closed" && (
               <>
@@ -188,6 +225,41 @@ export function App() {
         />
       ) : (
         <>
+          {(state.carried ?? []).some((item) => item.status === "open") && (
+            <section className="memory-strip" aria-label="Engagements ouverts">
+              {(state.carried ?? [])
+                .filter((item) => item.status === "open")
+                .map((item) => (
+                  <article
+                    className="memory-card"
+                    key={`${item.session_id}-${item.id}`}
+                  >
+                    <div>
+                      <small>
+                        {item.session_title}
+                        {item.owner_name ? ` · ${item.owner_name}` : ""}
+                      </small>
+                      <p>{item.text}</p>
+                    </div>
+                    <button
+                      type="button"
+                      className="text-button"
+                      onClick={() => {
+                        const socket = socketRef.current;
+                        if (socket)
+                          send(socket, {
+                            type: "commitment.settle",
+                            session_id: item.session_id,
+                            note_id: item.id,
+                          });
+                      }}
+                    >
+                      C’est fait
+                    </button>
+                  </article>
+                ))}
+            </section>
+          )}
           {!connected && (
             <div className="session-notice" role="status">
               {reconnecting
@@ -217,7 +289,7 @@ export function App() {
                 aria-modal="true"
                 aria-labelledby="resume-title"
               >
-                <h2 id="resume-title">Reprendre avec Atlas</h2>
+                <h2 id="resume-title">Reprendre avec Quorumy</h2>
                 <p>
                   La source reste celle de cette session. L’analyse reprend
                   après votre confirmation.
@@ -265,7 +337,7 @@ export function App() {
           {(promptBarVisible || captureMode === "text") && (
             <section className="manual command-bar">
               <input
-                aria-label="Message à Atlas"
+                aria-label="Message à Quorumy"
                 disabled={!listening || !connected}
                 maxLength={12000}
                 value={manual}
@@ -273,8 +345,8 @@ export function App() {
                 onKeyDown={(event) => event.key === "Enter" && inject()}
                 placeholder={
                   listening
-                    ? "Une idée, une question… Adressez-vous à Atlas."
-                    : "Reprenez la session pour écrire à Atlas"
+                    ? "Une idée, une question… Adressez-vous à Quorumy."
+                    : "Reprenez la session pour écrire à Quorumy"
                 }
               />
               <button
@@ -301,7 +373,7 @@ export function App() {
             audioStatus={audioStatus}
             audioLevel={audioLevel}
           />
-          <AtlasSubtitles
+          <QuorumySubtitles
             enabled={subtitlesEnabled}
             text={subtitle}
             companionName={state.identity_name}

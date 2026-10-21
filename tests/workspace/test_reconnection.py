@@ -2,7 +2,7 @@
 
 from fastapi.testclient import TestClient
 
-from aparte.workspace.api import app as api
+from quorumy.workspace.api import app as api
 
 
 def receive_until(ws, predicate):
@@ -16,12 +16,12 @@ def receive_until(ws, predicate):
 def test_same_tab_can_replace_stale_socket_but_another_tab_cannot(
     monkeypatch, tmp_path
 ):
-    monkeypatch.setenv("APARTE_DATABASE_PATH", str(tmp_path / "reconnect.sqlite3"))
+    monkeypatch.setenv("QUORUMY_DATABASE_PATH", str(tmp_path / "reconnect.sqlite3"))
     with TestClient(api.create_app()) as client:
         token = client.get("/v1/bootstrap").json()["access_token"]
         hello = {
             "type": "client.hello",
-            "protocol_version": 12,
+            "protocol_version": 14,
             "client_id": "same-tab",
             "access_token": token,
         }

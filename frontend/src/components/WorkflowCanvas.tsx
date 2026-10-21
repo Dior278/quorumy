@@ -11,7 +11,7 @@ import {
   X,
 } from "lucide-react";
 import { useState, type ComponentType } from "react";
-import type { AtlasState } from "../protocol";
+import type { QuorumyState } from "../protocol";
 import { ResearchTasks } from "./ResearchTasks";
 
 type AudioStatus = "idle" | "requesting" | "active" | "paused" | "error";
@@ -65,7 +65,7 @@ export function WorkflowCanvas({
   audioStatus,
   onCancelTask,
 }: {
-  state: AtlasState;
+  state: QuorumyState;
   audioStatus: AudioStatus;
   onCancelTask?: (taskId: string) => void;
 }) {
@@ -315,7 +315,7 @@ function NodeInspector({
   onCancelTask,
 }: {
   node: NodeKey;
-  state: AtlasState;
+  state: QuorumyState;
   close: () => void;
   onCancelTask?: (taskId: string) => void;
 }) {
@@ -333,7 +333,7 @@ function NodeInspector({
     stt: "Transcription",
     memory: "Mémoire partagée",
     jev: "Orientation de la conversation",
-    speaker: "Réponses d’Atlas",
+    speaker: "Réponses de Quorumy",
     worker: "Recherches",
     notes: "Notes",
     board: "Tableau",

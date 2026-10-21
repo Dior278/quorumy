@@ -11,6 +11,6 @@ describe("prompt bar preference", () => {
     expect(promptBarVisibleByDefault({ getItem: () => "false" })).toBe(false);
     const setItem = vi.fn();
     savePromptBarVisibility(false, { setItem });
-    expect(setItem).toHaveBeenCalledWith("atlas.promptBarVisible", "false");
+    expect(setItem).toHaveBeenCalledWith("quorumy.promptBarVisible", "false");
   });
 });
