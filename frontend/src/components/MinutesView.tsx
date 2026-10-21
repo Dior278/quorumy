@@ -20,13 +20,13 @@ type Board = {
   notes: Note[];
 };
 const labels: Record<string, string> = {
-  decision: "Décision",
+  decision: "Decision",
   action: "Action",
   question: "Question",
-  risk: "Vigilance",
-  proposed: "À relire",
-  confirmed: "Validé",
-  rejected: "Écarté",
+  risk: "Risk",
+  proposed: "To review",
+  confirmed: "Confirmed",
+  rejected: "Set aside",
 };
 
 export function MinutesView({ state }: { state: QuorumyState }) {
@@ -48,11 +48,11 @@ export function MinutesView({ state }: { state: QuorumyState }) {
     <section className="minutes-shell">
       <div className="minutes-heading">
         <div>
-          <p className="eyebrow">DE LA DISCUSSION À L’ENGAGEMENT</p>
-          <h1>Ce que vous retenez</h1>
+          <p className="eyebrow">FROM DISCUSSION TO COMMITMENT</p>
+          <h1>What you keep</h1>
           <p>
-            L’IA propose. Vous relisez les paroles et confirmez ce qui a
-            réellement été convenu.
+            The model proposes. You reread the words and confirm what was
+            actually agreed.
           </p>
         </div>
         <button
@@ -61,22 +61,21 @@ export function MinutesView({ state }: { state: QuorumyState }) {
           onClick={() => void request("POST")}
         >
           {busy
-            ? "Préparation…"
+            ? "Preparing…"
             : board
-              ? "Actualiser les propositions"
-              : "Préparer les propositions"}
+              ? "Refresh proposals"
+              : "Prepare proposals"}
         </button>
       </div>
       {!state.consent_at && (
         <p className="notice">
-          Reprenez la session pour préparer de nouvelles propositions. La
-          relecture reste disponible.
+          Resume the session to prepare new proposals. Review stays available.
         </p>
       )}
       {board?.stale && (
         <p className="notice">
-          La discussion a évolué. Actualisez le carnet avant de valider d’autres
-          engagements.
+          The discussion has moved on. Refresh the record before confirming more
+          commitments.
         </p>
       )}
       {error && (
@@ -90,11 +89,11 @@ export function MinutesView({ state }: { state: QuorumyState }) {
             onClick={() =>
               void download(
                 `/v1/sessions/${state.session_id}/minutes/md`,
-                "quorumy-engagements.md",
+                "quorumy-commitments.md",
               ).catch((e) => setError(String(e)))
             }
           >
-            Exporter les engagements
+            Export commitments
           </button>
           {!board.stale && (
             <button
@@ -105,13 +104,13 @@ export function MinutesView({ state }: { state: QuorumyState }) {
                 ).catch((e) => setError(String(e)))
               }
             >
-              Rappels calendrier
+              Calendar reminders
             </button>
           )}
           <span>
             {board.discarded > 0
-              ? `${board.discarded} proposition(s) sans citation exacte écartée(s).`
-              : "Les extraits sont contrôlés dans la transcription."}
+              ? `${board.discarded} proposal(s) without an exact quote were set aside.`
+              : "Quotes are checked against the transcript."}
           </span>
         </div>
       )}
@@ -119,12 +118,11 @@ export function MinutesView({ state }: { state: QuorumyState }) {
         <div className="empty">
           <h2>
             {board
-              ? "Aucun engagement suffisamment étayé."
-              : "Chaque engagement mérite une preuve."}
+              ? "No commitment is supported well enough."
+              : "Every commitment deserves evidence."}
           </h2>
           <p>
-            Les suggestions et les hypothèses ne deviennent pas automatiquement
-            des décisions.
+            Suggestions and hypotheses do not become decisions on their own.
           </p>
         </div>
       )}
@@ -134,7 +132,7 @@ export function MinutesView({ state }: { state: QuorumyState }) {
             key={`${board.version}-${note.id}`}
             note={note}
             people={[
-              { id: "renard", name: "Renard", connected: true },
+              { id: "renard", name: "You", connected: true },
               ...(state.participants || []).filter((p) => p.id !== "renard"),
             ]}
             disabled={busy || board.stale}
@@ -152,10 +150,9 @@ export function MinutesView({ state }: { state: QuorumyState }) {
         ))}
       </div>
       <p className="fine-print">
-        Une citation exacte ne garantit pas l’interprétation. La relecture porte
-        le nom de son auteur. Les voix d’un appel externe partagé ne sont pas
-        identifiées automatiquement. Les fichiers calendrier sont des rappels,
-        sans invitation envoyée.
+        An exact quote does not guarantee the interpretation. A review carries
+        the reviewer’s name. Voices from a shared external call are not
+        identified automatically. Calendar files are reminders, not invitations.
       </p>
     </section>
   );
@@ -183,35 +180,35 @@ function NoteCard({
       <h2>{note.text}</h2>
       {note.evidence.map((e) => (
         <blockquote key={e.utterance_id}>
-          <p>« {e.quote} »</p>
+          <p>“{e.quote}”</p>
           <cite>{e.speaker}</cite>
         </blockquote>
       ))}
       {note.kind === "action" && (
         <div className="commitment-fields">
           <label>
-            Responsable
+            Owner
             <select
               value={owner}
               disabled={disabled}
               onChange={(e) => setOwner(e.target.value)}
             >
-              <option value="">Non attribué</option>
+              <option value="">Unassigned</option>
               {people.map((p) => (
                 <option value={p.id} key={p.id}>
                   {p.name}
-                  {p.connected ? "" : " · absent"}
+                  {p.connected ? "" : " · away"}
                 </option>
               ))}
               {owner && !people.some((p) => p.id === owner) && (
                 <option value={owner}>
-                  {note.owner_name || "Ancien participant"}
+                  {note.owner_name || "Former participant"}
                 </option>
               )}
             </select>
           </label>
           <label>
-            Échéance confirmée
+            Confirmed due date
             <input
               type="date"
               value={due}
@@ -219,7 +216,7 @@ function NoteCard({
               onChange={(e) => setDue(e.target.value)}
             />
           </label>
-          {note.due_quote && <small>Entendu : {note.due_quote}</small>}
+          {note.due_quote && <small>Heard: {note.due_quote}</small>}
         </div>
       )}
       <div className="commitment-actions">
@@ -227,20 +224,20 @@ function NoteCard({
           disabled={disabled}
           onClick={() => void review("confirmed", owner, due)}
         >
-          Confirmer
+          Confirm
         </button>
         <button
           disabled={disabled}
           onClick={() => void review("rejected", owner, due)}
         >
-          Écarter
+          Set aside
         </button>
         {note.status !== "proposed" && (
           <button
             disabled={disabled}
             onClick={() => void review("proposed", owner, due)}
           >
-            À relire
+            To review
           </button>
         )}
       </div>

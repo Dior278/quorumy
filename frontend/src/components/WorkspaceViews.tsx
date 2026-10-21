@@ -9,19 +9,19 @@ export function Board({ state }: { state: QuorumyState }) {
     return (
       <div className="empty">
         <span>01</span>
-        <h2>Les idées prennent place ici.</h2>
+        <h2>Ideas land here.</h2>
         <p>
-          Quorumy rassemble les idées, les décisions et les résultats de
-          recherche au fil de la discussion.
+          Quorumy gathers ideas, decisions, and research results as the
+          discussion moves.
         </p>
       </div>
     );
   const labels: Record<string, string> = {
-    idea: "Idée",
+    idea: "Idea",
     question: "Question",
-    decision: "Décision évoquée",
+    decision: "Decision mentioned",
     suggestion: "Suggestion",
-    finding: "Résultat",
+    finding: "Finding",
   };
   return (
     <div className="board">
@@ -51,7 +51,7 @@ export function Transcript({
     ...state.transcript.map((u) => ({
       id: u.id,
       at: u.committed_at,
-      speaker: u.speaker === "unknown" ? "Voix non identifiée" : u.speaker,
+      speaker: u.speaker === "unknown" ? "Unidentified voice" : u.speaker,
       text: u.text,
       assistant: false,
       delivery: "",
@@ -73,21 +73,21 @@ export function Transcript({
         sourceIds: s.source_ids ?? [],
         delivery:
           s.status === "interrupted"
-            ? "Interrompue · texte préparé"
+            ? "Interrupted · prepared text"
             : s.status === "suppressed"
-              ? "Réponse écrite · voix coupée"
+              ? "Written answer · voice off"
               : s.status === "playing"
-                ? "En cours de lecture"
+                ? "Playing"
                 : "",
       })),
   ].sort((a, b) => (b.at ?? "").localeCompare(a.at ?? ""));
   if (!entries.length && !partial)
     return (
       <div className="empty">
-        <h2>La conversation commence ici.</h2>
+        <h2>The conversation starts here.</h2>
         <p>
-          Les paroles transcrites et les réponses de Quorumy restent
-          consultables pendant la session.
+          Transcribed words and Quorumy’s answers stay available during the
+          session.
         </p>
       </div>
     );
@@ -95,7 +95,7 @@ export function Transcript({
     <div className="transcript">
       {partial && (
         <div className="line partial">
-          <time>En cours</time>
+          <time>Live</time>
           <p>{partial}</p>
         </div>
       )}
@@ -106,7 +106,7 @@ export function Transcript({
         >
           <time>
             {item.at
-              ? new Date(item.at).toLocaleTimeString("fr-FR", {
+              ? new Date(item.at).toLocaleTimeString("en", {
                   hour: "2-digit",
                   minute: "2-digit",
                 })
@@ -180,14 +180,14 @@ function Sources({
     <details className={className}>
       <summary>
         {className === "answer-sources"
-          ? "Origine de cette réponse"
-          : "Voir les sources"}
+          ? "Where this answer came from"
+          : "View sources"}
       </summary>
-      {utterances.length > 0 && <span>Dans la conversation</span>}
+      {utterances.length > 0 && <span>In the conversation</span>}
       {utterances.map((u) => (
         <blockquote key={u.id}>{u.text}</blockquote>
       ))}
-      {links.size > 0 && <span>Sources consultées · {links.size}</span>}
+      {links.size > 0 && <span>Sources checked · {links.size}</span>}
       {Array.from(links.values()).map((s) => (
         <a key={s.url} href={s.url} target="_blank" rel="noopener noreferrer">
           {s.title || s.url}
@@ -195,8 +195,8 @@ function Sources({
       ))}
       {links.size > 0 && (
         <small>
-          Ces références permettent de contrôler la réponse ; leur présence ne
-          valide pas chaque affirmation.
+          These references let you check the answer; listing them does not
+          confirm every claim.
         </small>
       )}
     </details>
@@ -219,35 +219,36 @@ export function ActivityStrip({
   const labels: Record<string, string> = {
     task:
       latestTask?.status === "failed"
-        ? "Une recherche n’a pas abouti. Consultez les détails dans Agents."
+        ? "A search did not finish. See the details in Agents."
         : latestTask?.status === "canceled"
-          ? "Recherche arrêtée. La conversation peut continuer."
+          ? "Research stopped. The conversation can continue."
           : latestTask?.status === "done"
-            ? "Le résultat de recherche est disponible."
-            : "Recherche en cours. Vous pouvez la suivre dans Agents.",
-    notes: "Les notes sont à jour.",
-    heard: "Intervention enregistrée.",
-    "board.curated": "Le tableau est à jour.",
-    "board.create": "Une idée a rejoint le tableau.",
-    "board.update": "Une idée a été précisée.",
-    "session.renamed": "Le titre de la session est à jour.",
-    "minutes.generated": "Les engagements sont prêts à être relus.",
-    "minutes.reviewed": "Votre relecture est enregistrée.",
-    "voice.muted": "La voix est coupée. Les réponses restent écrites.",
-    "voice.active": "La voix de Quorumy est activée.",
+            ? "The research result is ready."
+            : "Research is running. You can follow it in Agents.",
+    notes: "Notes are up to date.",
+    heard: "Turn recorded.",
+    "board.curated": "The board is up to date.",
+    "board.create": "An idea joined the board.",
+    "board.update": "An idea was refined.",
+    "session.renamed": "The session title is up to date.",
+    "minutes.generated": "Commitments are ready to review.",
+    "minutes.reviewed": "Your review is saved.",
+    "voice.muted": "Voice is off. Answers stay written.",
+    "voice.active": "Quorumy’s voice is on.",
+    "commitment.done": "Commitment closed.",
   };
   const activity = latest
     ? (labels[latest.kind] ?? latest.summary)
-    : "Quorumy est prêt. La conversation peut commencer.";
+    : "Quorumy is ready. The conversation can start.";
   return (
     <footer>
       <div className="audio-monitor" aria-label={`Microphone ${audioStatus}`}>
         <span>
           {state.capture_mode === "text"
-            ? "Session texte"
+            ? "Text session"
             : audioStatus === "active"
-              ? "Écoute en cours"
-              : "Écoute arrêtée"}
+              ? "Listening"
+              : "Listening off"}
         </span>
         <div className="wave" aria-hidden="true">
           {WAVE_SHAPE.map((shape, index) => (

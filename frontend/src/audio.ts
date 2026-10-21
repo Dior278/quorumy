@@ -45,7 +45,7 @@ export class AudioBridge {
     const ensureCurrent = (stream?: MediaStream) => {
       if (generation !== this.captureGeneration) {
         stream?.getTracks().forEach((track) => track.stop());
-        throw new DOMException("Capture annulée", "AbortError");
+        throw new DOMException("Capture canceled", "AbortError");
       }
     };
     ensureCurrent();
@@ -89,7 +89,7 @@ export class AudioBridge {
             display.getTracks().forEach((track) => track.stop());
             if (mode === "system" || mode === "mixed") {
               throw new Error(
-                "Aucune piste audio partagée. Sélectionnez un onglet avec Partager l’audio, ou choisissez Microphone.",
+                "No shared audio track. Select a tab with Share audio, or choose Microphone.",
               );
             }
           } else {

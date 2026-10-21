@@ -135,16 +135,16 @@ def create_app() -> FastAPI:
 
     async def room_for_host(host: str, session_cookie: str) -> Room:
         if shared_room is None:
-            raise HTTPException(503, "Le serveur démarre encore.")
+            raise HTTPException(503, "The server is still starting.")
         if session_cookie:
             user = await accounts.user_for_session(session_cookie)
             if user is not None:
                 return await ensure_room(user)
         if auth_required and host != "testclient":
-            raise HTTPException(401, "Connectez-vous.")
+            raise HTTPException(401, "Sign in.")
         if host in {"127.0.0.1", "::1", "testclient"}:
             return shared_room
-        raise HTTPException(403, "Ouvrez Quorumy sur cet ordinateur.")
+        raise HTTPException(403, "Open Quorumy on this computer.")
 
     def open_paths() -> set[str]:
         return {"/v1/bootstrap", "/v1/protocol", "/v1/register", "/v1/login"}
@@ -278,7 +278,7 @@ def create_app() -> FastAPI:
             request.cookies.get("quorumy_session", ""),
         )
         if not await room.resources.engine.rename_session(session_id, body.title):
-            raise HTTPException(404, "Session introuvable.")
+            raise HTTPException(404, "Session not found.")
         return {"updated": True}
 
     @app.delete("/v1/sessions/{session_id}", status_code=204)
@@ -289,7 +289,7 @@ def create_app() -> FastAPI:
         )
         async with room.lock:
             if not await room.resources.engine.delete_session(session_id):
-                raise HTTPException(404, "Session introuvable.")
+                raise HTTPException(404, "Session not found.")
         return Response(status_code=204)
 
     @app.get("/v1/sessions/{session_id}/export")
@@ -300,7 +300,7 @@ def create_app() -> FastAPI:
         )
         content = await room.resources.engine.export_session(session_id)
         if content is None:
-            raise HTTPException(404, "Session introuvable.")
+            raise HTTPException(404, "Session not found.")
         return Response(
             content,
             media_type="text/markdown",
@@ -314,7 +314,7 @@ def create_app() -> FastAPI:
             request.cookies.get("quorumy_session", ""),
         )
         if await room.resources.engine.store.load(session_id) is None:
-            raise HTTPException(404, "Session introuvable.")
+            raise HTTPException(404, "Session not found.")
         return await room.resources.engine.store.journal(session_id)
 
     @app.post("/v1/minutes")
@@ -327,11 +327,11 @@ def create_app() -> FastAPI:
         try:
             return await task
         except asyncio.CancelledError:
-            raise HTTPException(409, "Analyse interrompue à la mise en pause.")
+            raise HTTPException(409, "Analysis stopped because the session was paused.")
         except ValueError as error:
             raise HTTPException(409, str(error)) from error
         except Exception as error:
-            raise HTTPException(502, "La préparation a échoué. Réessayez.") from error
+            raise HTTPException(502, "Preparation failed. Try again.") from error
 
     @app.patch("/v1/minutes")
     async def review_minutes(body: Review, request: Request):
@@ -352,7 +352,7 @@ def create_app() -> FastAPI:
         )
         state = await room.resources.engine.store.load(session_id)
         if state is None or not state.minutes or format not in {"md", "ics"}:
-            raise HTTPException(404, "Engagements introuvables.")
+            raise HTTPException(404, "Commitments not found.")
         if format == "ics" and state.minutes.get("stale"):
             raise HTTPException(
                 409, "Actualisez les engagements avant l’export calendrier."
@@ -396,14 +396,14 @@ def create_app() -> FastAPI:
                 await websocket.close(code=1008)
                 return
             if hello.protocol_version != product.protocol_version:
-                raise ValueError("Rechargez la page pour utiliser la nouvelle version.")
+                raise ValueError("Reload the page to use the new version.")
             async with room.lock:
                 if (
                     room.controller is not None
                     and room.controller_id != hello.client_id
                 ):
                     raise ValueError(
-                        "Quorumy est déjà ouvert dans un autre onglet. Fermez-le puis réessayez."
+                        "Quorumy is already open in another tab. Close it and try again."
                     )
                 if room.controller is not None:
                     # A reconnect from the same tab can replace a half-open socket.
@@ -438,12 +438,12 @@ def create_app() -> FastAPI:
                         continue
                     raw = frame.get("text", "")
                     if len(raw) > 64000:
-                        raise ValueError("Message trop volumineux.")
+                        raise ValueError("Message is too large.")
                     message = CLIENT_ADAPTER.validate_json(raw)
                     if isinstance(message, BoardCurate):
                         if not room.resources.engine.state.consent_at:
                             raise ValueError(
-                                "Reprenez la session avant d’organiser le tableau."
+                                "Resume the session before organizing the board."
                             )
                         room.resources.engine._spawn(
                             room.resources.engine.curate_board()
@@ -460,7 +460,7 @@ def create_app() -> FastAPI:
                         {
                             "type": "protocol.error",
                             "code": "COMMAND_REJECTED",
-                            "message": "Vérifiez les champs envoyés."
+                            "message": "Check the fields that were sent."
                             if isinstance(error, ValidationError)
                             else str(error),
                         }
@@ -470,7 +470,7 @@ def create_app() -> FastAPI:
                         {
                             "type": "protocol.error",
                             "code": "COMMAND_FAILED",
-                            "message": "Cette opération a échoué. Vos données restent disponibles.",
+                            "message": "This action failed. Your data is still available.",
                         }
                     )
         except (WebSocketDisconnect, RuntimeError, TimeoutError):
@@ -483,7 +483,7 @@ def create_app() -> FastAPI:
                         "code": "CONNECTION_REJECTED",
                         "message": error.detail
                         if isinstance(error.detail, str)
-                        else "Connexion refusée.",
+                        else "Connection refused.",
                     }
                 )
             await websocket.close(code=1008)
@@ -635,7 +635,7 @@ async def dispatch_client_message(
         await engine.start_session(message.model_dump(mode="json", exclude={"type"}))
     elif isinstance(message, SessionOpen):
         if not await engine.open_session(message.session_id):
-            raise ValueError("Session introuvable.")
+            raise ValueError("Session not found.")
     elif isinstance(message, SessionLanguage):
         await engine.set_language(message.language)
     elif isinstance(message, VoiceModeCommand):
@@ -647,7 +647,7 @@ async def dispatch_client_message(
     elif isinstance(message, SessionCommand):
         if message.command == "resume":
             if message.consent is not True:
-                raise ValueError("Confirmez l’accord avant de reprendre.")
+                raise ValueError("Confirm agreement before resuming.")
             engine.state.consent_at = now_iso()
         await engine.session_command(message.command)
     elif isinstance(message, FloorChanged):
@@ -660,7 +660,7 @@ async def dispatch_client_message(
         await engine.settle_commitment(message.session_id, message.note_id)
     elif isinstance(message, TranscriptInject):
         if engine.state.session_status != SessionStatus.LISTENING:
-            raise ValueError("Reprenez la session avant d’envoyer un message.")
+            raise ValueError("Resume the session before sending a message.")
         await engine.commit_utterance(message.text, source="manual")
     elif isinstance(message, PlaybackChanged):
         await engine.playback_changed(message.speech_id, message.type.split(".", 1)[1])

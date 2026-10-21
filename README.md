@@ -1,10 +1,10 @@
 # Quorumy
 
-Un coéquipier de réunion. Il garde le fil, cherche, repère les incohérences, et ne parle que lorsque la parole lui est donnée. S’il a quelque chose d’urgent, il lève la main.
+A meeting companion. It keeps the thread, searches, spots inconsistencies, and speaks only when given the floor. When something is urgent, it raises a hand.
 
-## Démarrer
+## Start
 
-Prérequis : [uv](https://docs.astral.sh/uv/getting-started/installation/), [Bun](https://bun.sh/docs/installation) et [Node.js 24](https://nodejs.org/en/download). uv installe Python si nécessaire.
+Requirements: [uv](https://docs.astral.sh/uv/getting-started/installation/), [Bun](https://bun.sh/docs/installation), and [Node.js 24](https://nodejs.org/en/download). uv installs Python if needed.
 
 ```sh
 git clone https://github.com/Dior278/quorumy.git
@@ -13,32 +13,32 @@ uv run --locked python scripts/project.py setup
 uv run --locked quorumy
 ```
 
-Le serveur écoute sur toutes les interfaces, port **8765**. Ouvrez l’adresse de la machine, par exemple http://127.0.0.1:8765/.
+The server listens on every interface, port **8765**. Open the machine’s address, for example http://127.0.0.1:8765/.
 
-Créez un compte avec une [clé Hugging Face](https://huggingface.co/settings/tokens) autorisée à appeler les Inference Providers. Le modèle par défaut est `Qwen/Qwen2.5-7B-Instruct:cheapest`. Vous pouvez le remplacer par n’importe quel modèle de chat du routeur, avec `:cheapest`, `:fastest` ou `:preferred`.
+Create an account with a [Hugging Face key](https://huggingface.co/settings/tokens) allowed to call Inference Providers. The default model is `Qwen/Qwen2.5-7B-Instruct:cheapest`. You can replace it with any chat model on the router, using `:cheapest`, `:fastest`, or `:preferred`.
 
-La clé reste sur le serveur. Quorumy parle avec Kokoro (`hexgrad/Kokoro-82M`) et écoute avec Whisper, les deux via cette clé. La voix suit la langue de la réunion : française par défaut (`ff_siwis`).
+The key stays on the server. Quorumy speaks with Kokoro (`hexgrad/Kokoro-82M`) and listens with Whisper, both through that key. The voice follows the meeting language. French is the default meeting language (`ff_siwis`).
 
-Pour limiter l’accès à cette machine : `QUORUMY_AUTH=off uv run --locked quorumy --host 127.0.0.1`.
+To limit access to this machine: `QUORUMY_AUTH=off uv run --locked quorumy --host 127.0.0.1`.
 
-## Pendant la réunion
+## During the meeting
 
-Démarrez après accord des participants. Quorumy prend des notes et peut lancer une recherche pendant que la conversation continue. Il répond quand on s’adresse à lui (« Quorumy, à toi »). Sinon il lève la main : l’icône clignote en rouge quand le point est urgent. Quelqu’un lui donne alors la parole.
+Start after the participants agree. Quorumy takes notes and can search while the conversation continues. It answers when addressed (“Quorumy, your turn”). Otherwise it raises a hand: the icon blinks red when the point is urgent. Someone then gives it the floor.
 
-Les engagements se relisent et se confirment avant l’export. Ceux qui sont confirmés reviennent à la réunion suivante. Si un chiffre ou une décision les contredit, Quorumy lève la main en rouge. Les sessions sont enregistrées sur le serveur.
+Commitments are reread and confirmed before export. Confirmed ones return at the next meeting. If a number or a decision contradicts them, Quorumy raises a red hand. Sessions are stored on the server.
 
-## Vérifier
+## Check
 
 ```sh
 uv run --locked python scripts/project.py doctor
 uv run --locked python scripts/project.py check
 ```
 
-`doctor` vérifie la configuration ; `check` lance les tests et la compilation sans clé API.
+`doctor` checks the configuration; `check` runs the tests and the build without an API key.
 
 ## Documentation
 
 - [Architecture](ARCHITECTURE.md)
-- [Contribuer](CONTRACT.md)
-- [Évaluer le projet](docs/EVALUATION.md)
-- [Sources et auteurs](ATTRIBUTIONS.md)
+- [Contributing](CONTRACT.md)
+- [Evaluate the project](docs/EVALUATION.md)
+- [Sources and authors](ATTRIBUTIONS.md)

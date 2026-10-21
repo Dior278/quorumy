@@ -119,7 +119,7 @@ def check_secrets(root: Path, paths: list[Path]) -> None:
         ):
             exposed.append(path.relative_to(root).as_posix())
     if exposed:
-        raise ValueError("Identifiant potentiel détecté dans : " + ", ".join(exposed))
+        raise ValueError("Possible identifier found in: " + ", ".join(exposed))
     if (root / ".git").exists():
         result = subprocess.run(
             ["git", "ls-files", "--cached", "-z"],
@@ -131,7 +131,7 @@ def check_secrets(root: Path, paths: list[Path]) -> None:
         allowed = {path.relative_to(root).as_posix() for path in paths}
         if tracked - allowed:
             raise ValueError(
-                "Fichiers suivis hors périmètre de remise : "
+                "Tracked files outside the release scope: "
                 + ", ".join(sorted(tracked - allowed))
             )
 
@@ -176,9 +176,7 @@ def main() -> int:
         if args.check:
             paths = source_files(ROOT)
             check_secrets(ROOT, paths)
-            print(
-                f"OK : {len(paths)} fichiers sources contrôlés ; aucune clé connue détectée."
-            )
+            print(f"OK: {len(paths)} source files checked; no known key detected.")
         else:
             print(build_archive(ROOT, args.output.resolve()))
     except (ValueError, OSError, subprocess.CalledProcessError) as exc:

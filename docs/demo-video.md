@@ -1,24 +1,24 @@
-# Démonstration et audio
+# Demo and audio
 
-## Préparer l’appel
+## Prepare the call
 
-Ouvrir Quorumy et la réunion dans deux onglets de Chrome ou Edge. Utiliser un casque et informer les participants de l’analyse et de l’enregistrement vidéo.
+Open Quorumy and the meeting in two Chrome or Edge tabs. Use headphones, and tell participants about the analysis and the video recording.
 
-1. Dans Quorumy, choisir **Microphone + audio partagé**, confirmer l’accord et sélectionner l’onglet de la réunion avec son audio.
-2. Dans la réunion, partager l’onglet Quorumy **avec son audio** pour que tous entendent ses réponses.
-3. Dans **••• → Faire entendre Quorumy dans l’appel**, jouer le son de test et demander à un participant de confirmer sa réception.
-4. Faire parler un participant, vérifier sa transcription, puis demander une courte réponse à Quorumy.
+1. In Quorumy, choose **Microphone + shared audio**, confirm agreement, and select the meeting tab with its audio.
+2. In the meeting, share the Quorumy tab **with its audio** so everyone can hear the replies.
+3. In **••• → Let the call hear Quorumy**, play the test sound and ask a participant to confirm they heard it.
+4. Have a participant speak, check the transcript, then ask Quorumy for a short reply.
 
-**Teams dans le navigateur :** Partager → Écran, fenêtre ou onglet → Onglet → Quorumy, puis activer **Partager aussi l’audio de l’onglet**. Le son entendu sur votre poste ne confirme pas sa réception dans l’appel.
+**Teams in the browser:** Share → Screen, window, or tab → Tab → Quorumy, then turn on **Also share tab audio**. Sound you hear on your own machine does not confirm that the call received it.
 
-Le partage audio dépend de la plateforme : [Google Meet](https://support.google.com/meet/answer/9308856?hl=fr), [Teams](https://support.microsoft.com/en-us/teams/meetings/share-sound-from-your-computer-in-microsoft-teams-meetings-or-live-events), [Zoom](https://support.zoom.com/hc/en/article?id=zm_kb&sysparm_article=KB0063608). Préférer la version web pour isoler le son de la réunion. En cas d’écho, mettre en pause et vérifier les sources audio.
+Audio sharing depends on the platform: [Google Meet](https://support.google.com/meet/answer/9308856?hl=en), [Teams](https://support.microsoft.com/en-us/teams/meetings/share-sound-from-your-computer-in-microsoft-teams-meetings-or-live-events), [Zoom](https://support.zoom.com/hc/en/article?id=zm_kb&sysparm_article=KB0063608). Prefer the web version so the meeting sound stays isolated. If there is echo, pause and check the audio sources.
 
-## Scénario vidéo
+## Video scenario
 
-1. Présenter le besoin : passer de la conversation à des actions vérifiables.
-2. Annoncer une décision et une action attribuée à Renard ; montrer les Notes.
-3. Demander une recherche à Quorumy et ouvrir les références de sa réponse.
-4. Relire un engagement, confirmer son responsable et sa date, puis exporter le rappel calendrier.
-5. Mettre en pause et rouvrir la session pour montrer la mémoire conservée.
+1. State the need: turn the conversation into checkable actions.
+2. Announce a decision and an action assigned to you; show Notes.
+3. Ask Quorumy to research something and open the references on the answer.
+4. Reread a commitment, confirm its owner and date, then export the calendar reminder.
+5. Pause and reopen the session to show that the memory was kept.
 
-Viser deux minutes pour la vidéo finale. Faire d’abord un court enregistrement d’essai : la voix des participants et celle de Quorumy doivent être audibles dans le fichier enregistré.
+Aim for two minutes for the final video. Record a short test first: the participants’ voices and Quorumy’s voice must both be audible in the recorded file.

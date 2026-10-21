@@ -151,7 +151,7 @@ describe("AudioBridge capture", () => {
     getDisplayMedia.mockResolvedValue(stream([], [videoTrack]));
     const bridge = new AudioBridge(vi.fn(), vi.fn(), vi.fn(), vi.fn());
     await expect(bridge.start("mixed")).rejects.toThrow(
-      "Aucune piste audio partagée",
+      "No shared audio track",
     );
     expect(microphoneTrack.stop).toHaveBeenCalled();
   });
@@ -160,7 +160,7 @@ describe("AudioBridge capture", () => {
     getDisplayMedia.mockResolvedValue(stream([], [videoTrack]));
     const bridge = new AudioBridge(vi.fn(), vi.fn(), vi.fn(), vi.fn());
     await expect(bridge.start("system")).rejects.toThrow(
-      "Aucune piste audio partagée",
+      "No shared audio track",
     );
   });
 
@@ -174,7 +174,7 @@ describe("AudioBridge capture", () => {
     );
     const bridge = new AudioBridge(vi.fn(), vi.fn(), vi.fn(), vi.fn());
     const pending = bridge.start("microphone");
-    const assertion = expect(pending).rejects.toThrow("Capture annulée");
+    const assertion = expect(pending).rejects.toThrow("Capture canceled");
     await vi.waitFor(() => expect(getUserMedia).toHaveBeenCalledOnce());
     await bridge.stopCapture();
     resolve(stream([microphoneTrack]));

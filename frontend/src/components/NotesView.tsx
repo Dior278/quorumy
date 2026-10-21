@@ -8,10 +8,9 @@ export function NotesView({ state }: { state: QuorumyState }) {
     return (
       <div className="empty notes-empty">
         <BookOpenText />
-        <h2>Un espace pour vos idées.</h2>
+        <h2>A place for your ideas.</h2>
         <p>
-          Parlez ou écrivez. Quorumy organise vos notes dès qu’une idée se
-          précise.
+          Speak or type. Quorumy organizes your notes as an idea takes shape.
         </p>
       </div>
     );
@@ -22,13 +21,12 @@ export function NotesView({ state }: { state: QuorumyState }) {
       <header className="notes-meta">
         <div>
           <BookOpenText />
-          <span>Notes vivantes</span>
+          <span>Living notes</span>
         </div>
         <div>
           <b>v{state.notes_version ?? 0}</b>
           <span>
-            {state.notes_cursor ?? 0}/{state.transcript.length} interventions
-            intégrées
+            {state.notes_cursor ?? 0}/{state.transcript.length} turns integrated
           </span>
         </div>
       </header>

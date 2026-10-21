@@ -157,7 +157,7 @@ export function useQuorumy() {
         const payload = await bootstrapRequest;
         if (payload.protocol_version !== CLIENT_PROTOCOL_VERSION) {
           socket.close(1008, "Protocol mismatch");
-          throw new Error("Quorumy a été mis à jour. Rechargez cette page.");
+          throw new Error("Quorumy was updated. Reload this page.");
         }
         if (!active || socket.readyState !== WebSocket.OPEN) return;
         send(socket, {
@@ -356,7 +356,7 @@ export function useQuorumy() {
     try {
       const socket = socketRef.current;
       if (!socket || socket.readyState !== WebSocket.OPEN)
-        throw new Error("La connexion à Quorumy n’est pas prête.");
+        throw new Error("The connection to Quorumy is not ready.");
       interruptPlayback();
       await startCapture();
       send(socket, {
@@ -378,7 +378,7 @@ export function useQuorumy() {
     try {
       const socket = socketRef.current;
       if (!socket || socket.readyState !== WebSocket.OPEN)
-        throw new Error("La connexion à Quorumy n’est pas prête.");
+        throw new Error("The connection to Quorumy is not ready.");
       if (value === "pause" || value === "stop") interruptPlayback();
       if (value === "resume") {
         if (!consent) {
@@ -417,7 +417,7 @@ export function useQuorumy() {
     try {
       const socket = socketRef.current;
       if (!socket || socket.readyState !== WebSocket.OPEN)
-        throw new Error("La connexion à Quorumy n’est pas prête.");
+        throw new Error("The connection to Quorumy is not ready.");
       interruptPlayback();
       captureReadyRef.current = false;
       await audioRef.current?.stopCapture();
@@ -453,7 +453,7 @@ export function useQuorumy() {
     sessionId: string,
     currentTitle: string,
   ): Promise<void> {
-    const title = window.prompt("Titre de la session", currentTitle)?.trim();
+    const title = window.prompt("Session title", currentTitle)?.trim();
     if (!title || title === currentTitle) return;
     try {
       await renameQuorumySession(sessionId, title);
@@ -466,11 +466,7 @@ export function useQuorumy() {
     sessionId: string,
     title: string,
   ): Promise<void> {
-    if (
-      !window.confirm(
-        `Supprimer définitivement « ${title} » de cet ordinateur ?`,
-      )
-    )
+    if (!window.confirm(`Permanently delete “${title}” from this computer?`))
       return;
     try {
       await deleteQuorumySession(sessionId);

@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 def run(*args: str) -> None:
     executable = shutil.which(args[0])
     if not executable:
-        raise RuntimeError(f"{args[0]} absent du PATH. Voir les prérequis du README.")
+        raise RuntimeError(f"{args[0]} is not on PATH. See the README requirements.")
     print(f"> {' '.join(args)}", flush=True)
     subprocess.run([executable, *args[1:]], cwd=ROOT, check=True)
 
@@ -27,9 +27,9 @@ def setup() -> None:
     run("bun", "run", "--cwd", "frontend", "build")
     if not any((ROOT / name).exists() for name in (".env", ".Secrets")):
         shutil.copyfile(ROOT / ".env.example", ROOT / ".env")
-        print(".env créé : renseignez HF_TOKEN, ou la clé dans le compte Quorumy.")
+        print(".env created: set HF_TOKEN, or add the key in the Quorumy account.")
     run("uv", "run", "--locked", "python", "scripts/project.py", "doctor")
-    print("Installation terminée. Lancer : uv run --locked quorumy")
+    print("Setup complete. Start with: uv run --locked quorumy")
 
 
 def doctor() -> None:
@@ -46,19 +46,19 @@ def doctor() -> None:
     except Exception as exc:
         # Validation errors can embed environment values; never echo them.
         raise RuntimeError(
-            f"Configuration invalide ({type(exc).__name__}). "
-            "Comparer .env et .data/config.json aux exemples documentés."
+            f"Invalid configuration ({type(exc).__name__}). "
+            "Compare .env and .data/config.json with the documented examples."
         ) from None
     frontend = Path(os.environ.get("QUORUMY_FRONTEND_DIR", ROOT / "frontend/dist"))
     if not (frontend / "index.html").is_file():
-        raise RuntimeError("Interface absente. Exécuter : bun run --cwd frontend build")
-    print("Configuration et interface compilée : OK")
+        raise RuntimeError("Interface missing. Run: bun run --cwd frontend build")
+    print("Configuration and built interface: OK")
     print(
-        "Hugging Face : "
-        + ("clé présente" if settings.key("hf_token") else "clé absente")
+        "Hugging Face: "
+        + ("key present" if settings.key("hf_token") else "key missing")
     )
-    print("Les clés présentes ne sont pas testées auprès des fournisseurs.")
-    print("Sans clé Hugging Face, le compte peut encore en fournir une.")
+    print("Present keys are not tested against providers.")
+    print("Without a Hugging Face key, an account can still supply one.")
 
 
 def check() -> None:
@@ -92,13 +92,13 @@ def check() -> None:
             for path, data in before.items()
         ):
             raise RuntimeError(
-                "Contrat généré périmé : régénérer openapi.json et protocol.gen.ts "
-                "avec les deux commandes affichées ci-dessus."
+                "Generated contract is stale: regenerate openapi.json and protocol.gen.ts "
+                "with the two commands printed above."
             )
     finally:
         for path, data in before.items():
             path.write_bytes(data)
-    print("Vérifications réussies, sans appel aux fournisseurs IA.")
+    print("Checks passed, with no calls to AI providers.")
 
 
 def main() -> int:
@@ -109,7 +109,7 @@ def main() -> int:
     try:
         {"setup": setup, "doctor": doctor, "check": check}[args.command]()
     except (RuntimeError, OSError, subprocess.CalledProcessError) as exc:
-        print(f"Échec : {exc}", file=sys.stderr)
+        print(f"Failed: {exc}", file=sys.stderr)
         return 1
     return 0
 

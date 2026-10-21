@@ -238,7 +238,7 @@ describe("connection recovery", () => {
       await first.open();
       first.receive({ type: "backend.hello", protocol_version: 14 });
     });
-    act(() => result.current.setManual("Brouillon à conserver"));
+    act(() => result.current.setManual("Draft to keep"));
     act(() => first.close(1006));
     expect(mocks.stopCapture).toHaveBeenCalled();
     expect(mocks.stopPlayback).toHaveBeenCalled();
@@ -263,7 +263,7 @@ describe("connection recovery", () => {
     });
     expect(second.sent[0].access_token).toBe("token-two");
     expect(second.sent[0].client_id).toBe(first.sent[0].client_id);
-    expect(result.current.manual).toBe("Brouillon à conserver");
+    expect(result.current.manual).toBe("Draft to keep");
     expect(result.current.state?.session_status).toBe("paused");
     expect(result.current.connected).toBe(true);
     expect(result.current.reconnecting).toBe(false);

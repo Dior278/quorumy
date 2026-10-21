@@ -16,25 +16,25 @@ describe("meeting sound check", () => {
         }),
     );
     render(<MeetingAudioSetup />);
-    fireEvent.click(screen.getByText("Faire entendre Quorumy dans l’appel"));
+    fireEvent.click(screen.getByText("Let the call hear Quorumy"));
     fireEvent.click(
-      screen.getByRole("button", { name: "Jouer le son de test" }),
+      screen.getByRole("button", { name: "Play the test sound" }),
     );
     const playing = screen.getByRole("button", {
-      name: "Lecture…",
+      name: "Playing…",
     }) as HTMLButtonElement;
     expect(playing.disabled).toBe(true);
     expect(screen.queryByRole("status")).toBeNull();
     finish();
     await waitFor(() =>
       expect(screen.getByRole("status").textContent).toContain(
-        "Un participant doit confirmer",
+        "A participant must confirm",
       ),
     );
     expect(
       (
         screen.getByRole("button", {
-          name: "Jouer le son de test",
+          name: "Play the test sound",
         }) as HTMLButtonElement
       ).disabled,
     ).toBe(false);
@@ -45,19 +45,19 @@ describe("meeting sound check", () => {
       new Error("No audio output"),
     );
     render(<MeetingAudioSetup />);
-    fireEvent.click(screen.getByText("Faire entendre Quorumy dans l’appel"));
+    fireEvent.click(screen.getByText("Let the call hear Quorumy"));
     fireEvent.click(
-      screen.getByRole("button", { name: "Jouer le son de test" }),
+      screen.getByRole("button", { name: "Play the test sound" }),
     );
     await waitFor(() =>
       expect(screen.getByRole("alert").textContent).toContain(
-        "n’a pas pu être joué",
+        "could not be played",
       ),
     );
     expect(screen.queryByRole("status")).toBeNull();
     vi.mocked(playMeetingTestSound).mockResolvedValueOnce();
     fireEvent.click(
-      screen.getByRole("button", { name: "Jouer le son de test" }),
+      screen.getByRole("button", { name: "Play the test sound" }),
     );
     await waitFor(() => expect(screen.getByRole("status")).toBeTruthy());
     expect(screen.queryByRole("alert")).toBeNull();

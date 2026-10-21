@@ -99,7 +99,7 @@ def test_markdown_separates_proposals_and_escapes_active_content():
         {**board["notes"][0], "status": "rejected", "text": "ne pas exporter"}
     )
     output = markdown_export(board, "Exemple")
-    assert "À vérifier" in output
+    assert "To review" in output
     assert "<script>" not in output
     assert "[lien](" not in output
     assert "ne pas exporter" not in output

@@ -36,7 +36,7 @@ describe("Session home memory", () => {
       />,
     );
     expect(
-      screen.getByText(/2 engagements confirmés vous attendent/),
+      screen.getByText(/2 confirmed commitments are waiting/),
     ).toBeTruthy();
   });
 });

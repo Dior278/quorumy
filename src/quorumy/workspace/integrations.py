@@ -1,4 +1,4 @@
-"""Outils de recherche du moteur de réunion."""
+"""Research tools for the meeting engine."""
 
 from quorumy.workspace.core.tools import ToolSpec
 
@@ -6,14 +6,14 @@ from quorumy.workspace.core.tools import ToolSpec
 def register_research(registry, backend):
     available = {"web": True}
     descriptions = {
-        "web": "Recherche web actuelle avec sources citées. Utiliser pour vérifier des informations externes.",
+        "web": "Current web research with cited sources. Use it to check external information.",
     }
     for provider in available:
 
         async def run(arguments, provider=provider):
             query = arguments.get("query")
             if not isinstance(query, str) or not 1 <= len(query.strip()) <= 12000:
-                raise ValueError("query doit contenir entre 1 et 12 000 caractères")
+                raise ValueError("query must contain between 1 and 12,000 characters")
             finding = await backend.research(query, "workspace", {}, provider)
             return {
                 "status": "ok",

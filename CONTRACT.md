@@ -1,30 +1,30 @@
-# Contribuer à Quorumy
+# Contributing to Quorumy
 
-Suivre le [README](README.md) pour installer et lancer le projet.
+Follow the [README](README.md) to install and run the project.
 
-## Règles de développement
+## Development rules
 
-- Garder une application et un moteur de session uniques.
-- Séparer interface, transport, orchestration, fournisseurs et stockage.
-- Gérer les dépendances avec uv et Bun ; mettre à jour leurs fichiers de verrouillage.
-- Demander l’accord avant la capture. Une pause doit arrêter l’écoute et les travaux.
-- Garder les citations consultables et faire valider les engagements avant export.
-- Afficher les erreurs des fournisseurs ; réserver les réponses fictives aux tests.
-- Préserver les sessions existantes et couvrir les corrections fonctionnelles par des tests.
-- Garder les clés et les données de réunion hors de Git, du frontend et des journaux.
-- Créditer le code et les ressources réutilisés dans [ATTRIBUTIONS.md](ATTRIBUTIONS.md).
+- Keep a single application and a single session engine.
+- Separate interface, transport, orchestration, providers, and storage.
+- Manage dependencies with uv and Bun; update their lockfiles.
+- Ask for agreement before capture. A pause must stop listening and work.
+- Keep quotes available and have commitments confirmed before export.
+- Show provider errors; reserve fake replies for tests.
+- Preserve existing sessions and cover functional fixes with tests.
+- Keep keys and meeting data out of Git, the frontend, and logs.
+- Credit reused code and assets in [ATTRIBUTIONS.md](ATTRIBUTIONS.md).
 
-## Avant un push
+## Before a push
 
 ```sh
 uv run --locked python scripts/project.py check
 ```
 
-Si les messages de l’API changent, régénérer le contrat avant ce contrôle :
+If API messages change, regenerate the contract before that check:
 
 ```sh
 uv run --locked python scripts/export_workspace_protocol.py
 bun run --cwd frontend generate:protocol
 ```
 
-Pour travailler sur l’interface, lancer le backend puis `bun run --cwd frontend dev`. Le frontend est accessible sur http://127.0.0.1:5173/.
+To work on the interface, start the backend, then `bun run --cwd frontend dev`. The frontend is available at http://127.0.0.1:5173/.

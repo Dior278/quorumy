@@ -3,27 +3,27 @@ import type { QuorumyState } from "../protocol";
 type Task = QuorumyState["tasks"][number];
 
 const tools: Record<string, string> = {
-  research_web: "Recherche web",
-  system_capabilities: "Outils disponibles",
-  pending_selection: "Demande de recherche",
+  research_web: "Web research",
+  system_capabilities: "Available tools",
+  pending_selection: "Research request",
 };
 
 function statusLabel(task: Task): string {
-  if (task.status === "done") return "Terminée";
-  if (task.status === "canceled") return "Annulée";
-  if (task.status === "failed") return "Échec";
-  if (task.status === "stale") return "Périmée";
+  if (task.status === "done") return "Done";
+  if (task.status === "canceled") return "Canceled";
+  if (task.status === "failed") return "Failed";
+  if (task.status === "stale") return "Outdated";
   return (
     (
       {
-        queued: "En attente",
-        planning: "Préparation",
-        executing: "Recherche",
-        synthesizing: "Synthèse",
-        integrating: "Intégration",
-        reporting: "Restitution",
+        queued: "Waiting",
+        planning: "Preparing",
+        executing: "Researching",
+        synthesizing: "Synthesizing",
+        integrating: "Integrating",
+        reporting: "Reporting",
       } as Record<string, string>
-    )[task.phase ?? "queued"] ?? "En cours"
+    )[task.phase ?? "queued"] ?? "In progress"
   );
 }
 
@@ -42,28 +42,28 @@ export function ResearchTasks({
         .map((task) => (
           <article className="inspection-card" key={task.id}>
             <div>
-              <b>{tools[task.tool] ?? "Recherche"}</b>
+              <b>{tools[task.tool] ?? "Research"}</b>
               <span className={task.status}>{statusLabel(task)}</span>
             </div>
             <p>{task.summary}</p>
             {task.error && (
               <p className="task-error">
                 {task.error === "mission_timeout"
-                  ? "Le délai maximal est atteint. Vous pouvez reformuler la demande."
+                  ? "The time limit was reached. You can rephrase the request."
                   : task.error === "duplicate_in_progress"
-                    ? "Une recherche identique est déjà en cours."
+                    ? "The same research is already running."
                     : task.status === "canceled"
-                      ? "Cette recherche a été arrêtée."
-                      : "La recherche n’a pas abouti. Les autres travaux restent disponibles."}
+                      ? "This research was stopped."
+                      : "The research did not finish. Other work is still available."}
               </p>
             )}
             {typeof task.duration_ms === "number" && (
               <small>
-                Durée totale : {(task.duration_ms / 1000).toFixed(1)} s
+                Total time: {(task.duration_ms / 1000).toFixed(1)} s
               </small>
             )}
             {task.reused_from && task.result && (
-              <small>Résultat déjà obtenu dans cette session.</small>
+              <small>This result was already found in this session.</small>
             )}
             {onCancel &&
               task.id &&
@@ -72,20 +72,18 @@ export function ResearchTasks({
                   className="task-cancel"
                   onClick={() => onCancel(task.id!)}
                 >
-                  Arrêter cette recherche
+                  Stop this research
                 </button>
               )}
             {task.result && (
               <details>
-                <summary>Détail du résultat</summary>
+                <summary>Result detail</summary>
                 <pre>{JSON.stringify(task.result, null, 2)}</pre>
               </details>
             )}
           </article>
         ))}
-      {!tasks.length && (
-        <p className="muted">Aucune recherche pour le moment.</p>
-      )}
+      {!tasks.length && <p className="muted">No research yet.</p>}
     </div>
   );
 }

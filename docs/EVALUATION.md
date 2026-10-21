@@ -1,16 +1,16 @@
-# Évaluer Quorumy
+# Evaluate Quorumy
 
-Installer et démarrer le projet avec le [README](../README.md). Un compte et une clé Hugging Face suffisent pour le parcours en mode Texte.
+Install and start the project with the [README](../README.md). An account and a Hugging Face key are enough for the Text path.
 
-## Scénario de test
+## Test scenario
 
-1. Démarrer une session Texte après accord des participants.
-2. Saisir : « Renard préparera le prototype. Nous retenons une interface en français. » Consulter les Notes après leur actualisation.
-3. Demander : « Quorumy, recherche la documentation officielle de WebRTC et indique la source. » Consulter la réponse et ses références.
-4. Dans Engagements, préparer les propositions, relire la citation, confirmer un responsable et une date, puis télécharger le calendrier.
-5. Terminer et rouvrir la session : les données sont conservées, la capture reste arrêtée.
+1. Start a Text session after the participants agree.
+2. Type: “You will prepare the prototype. We are keeping an English interface.” Open Notes after they update.
+3. Ask: “Quorumy, look up the official WebRTC documentation and name the source.” Open the answer and its references.
+4. In Commitments, prepare the proposals, reread the quote, confirm an owner and a date, then download the calendar.
+5. End the session and open it again: the data is kept, and capture stays stopped.
 
-## Contrôles automatiques
+## Automated checks
 
 ```sh
 uv run --locked python scripts/project.py check
@@ -18,26 +18,26 @@ uv run --locked --group browser playwright install chromium
 uv run --locked --group browser python scripts/check_quorumy_browser.py
 ```
 
-Ces contrôles utilisent des données fictives et ne nécessitent pas de clé API. Sous Linux, ajouter `--with-deps` à l’installation de Chromium. Le serveur de test utilise le port 8878.
+These checks use fictional data and do not need an API key. On Linux, add `--with-deps` to the Chromium install. The test server uses port 8878.
 
-Les [résultats GitHub Actions](https://github.com/Dior278/quorumy/actions) regroupent les tests, la compilation, le parcours navigateur et la génération de l’archive.
+The [GitHub Actions results](https://github.com/Dior278/quorumy/actions) collect the tests, the build, the browser path, and archive generation.
 
-## Dépannage
+## Troubleshooting
 
-| Problème | Action |
+| Problem | Action |
 | --- | --- |
-| Configuration ou démarrage | Lancer `uv run --locked python scripts/project.py doctor`. |
-| Interface absente ou ancienne | Exécuter `bun run --cwd frontend build`, puis redémarrer. |
-| Port occupé | Utiliser `uv run --locked quorumy --port 8766`. |
-| IA indisponible | Vérifier les clés, les crédits et l’accès aux modèles. |
-| Voix inaudible dans l’appel | Suivre le [guide audio](demo-video.md). |
+| Configuration or startup | Run `uv run --locked python scripts/project.py doctor`. |
+| Interface missing or old | Run `bun run --cwd frontend build`, then restart. |
+| Port in use | Use `uv run --locked quorumy --port 8766`. |
+| AI unavailable | Check the keys, the credits, and model access. |
+| Voice inaudible in the call | Follow the [audio guide](demo-video.md). |
 
-## Préparer la remise
+## Prepare the handoff
 
 ```sh
 uv run --locked python scripts/release.py
 ```
 
-L’archive `release/quorumy-source.zip` contient les sources et la documentation, sans clés, sessions ni dépendances installées. Si elle existe déjà, choisir un autre nom avec `--output release/quorumy-source-v2.zip`.
+The archive `release/quorumy-source.zip` contains the sources and the documentation, without keys, sessions, or installed dependencies. If it already exists, choose another name with `--output release/quorumy-source-v2.zip`.
 
-Joindre le lien du dépôt, une description courte, les membres de l’équipe et une vidéo de deux minutes maximum. Déclarer les [sources](../ATTRIBUTIONS.md) et les [contributions](CONTRIBUTIONS.md).
+Attach the repository link, a short description, the team members, and a video of two minutes at most. Declare the [sources](../ATTRIBUTIONS.md) and the [contributions](CONTRIBUTIONS.md).

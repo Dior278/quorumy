@@ -52,7 +52,7 @@ def test_provider_failure_is_redacted_and_never_replaced_by_demo_data():
 def test_weather_is_not_a_dedicated_tool():
     async def scenario():
         backend = LiveBackend(AppSettings(_env_file=None))
-        with pytest.raises(ProviderError, match="inconnu"):
+        with pytest.raises(ProviderError, match="Unknown research tool"):
             await backend.research("météo à Paris", "réunion", {}, "weather")
         await backend.close()
 

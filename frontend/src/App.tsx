@@ -68,7 +68,9 @@ export function App() {
     return <AccountGate error={error} onSubmit={authenticate} />;
   if (!state)
     return (
-      <main className="loading">{error || `Connexion à ${displayName}…`}</main>
+      <main className="loading">
+        {error || `Connecting to ${displayName}…`}
+      </main>
     );
   const listening = state.session_status === "listening";
   const capturing = audioStatus === "active" || audioStatus === "requesting";
@@ -78,8 +80,8 @@ export function App() {
     icon: typeof Workflow;
   }> = [
     { view: "notes", label: "Notes", icon: FileText },
-    { view: "board", label: "Tableau", icon: Columns3 },
-    { view: "minutes", label: "Engagements", icon: CheckCheck },
+    { view: "board", label: "Board", icon: Columns3 },
+    { view: "minutes", label: "Commitments", icon: CheckCheck },
     { view: "transcript", label: "Conversation", icon: MessageSquareText },
     { view: "flow", label: "Agents", icon: Workflow },
   ];
@@ -93,7 +95,7 @@ export function App() {
           {inSession && (
             <button
               className="icon-button back-button"
-              title="Terminer et revenir à l’accueil"
+              title="End and return home"
               onClick={() => void command("stop")}
             >
               <ArrowLeft size={18} />
@@ -104,8 +106,8 @@ export function App() {
             <strong>{inSession ? state.title : displayName}</strong>
             <small>
               {inSession
-                ? `Quorumy · ${listening ? "En cours" : "En pause"}`
-                : "Votre coéquipier de réunion"}
+                ? `Quorumy · ${listening ? "Live" : "Paused"}`
+                : "Your meeting companion"}
             </small>
           </div>
         </div>
@@ -127,14 +129,14 @@ export function App() {
                     ? "hand-signal urgent"
                     : "hand-signal"
                 }
-                title={state.hand.summary || "Quorumy demande la parole"}
+                title={state.hand.summary || "Quorumy is asking for the floor"}
                 onClick={() => {
                   const socket = socketRef.current;
                   if (socket) send(socket, { type: "floor.grant" });
                 }}
               >
                 <Hand size={18} />
-                {state.hand.level === "urgent" ? "Urgent" : "Parole"}
+                {state.hand.level === "urgent" ? "Urgent" : "Floor"}
               </button>
               <button
                 type="button"
@@ -144,7 +146,7 @@ export function App() {
                   if (socket) send(socket, { type: "floor.dismiss" });
                 }}
               >
-                Plus tard
+                Not now
               </button>
             </div>
           )}
@@ -197,10 +199,10 @@ export function App() {
           <div className={`connection ${connected ? "online" : ""}`}>
             <i />
             {connected
-              ? "Connecté"
+              ? "Connected"
               : reconnecting
-                ? "Reconnexion…"
-                : "Hors ligne"}
+                ? "Reconnecting…"
+                : "Offline"}
           </div>
         </div>
       </header>
@@ -226,7 +228,7 @@ export function App() {
       ) : (
         <>
           {(state.carried ?? []).some((item) => item.status === "open") && (
-            <section className="memory-strip" aria-label="Engagements ouverts">
+            <section className="memory-strip" aria-label="Open commitments">
               {(state.carried ?? [])
                 .filter((item) => item.status === "open")
                 .map((item) => (
@@ -254,7 +256,7 @@ export function App() {
                           });
                       }}
                     >
-                      C’est fait
+                      Done
                     </button>
                   </article>
                 ))}
@@ -263,21 +265,21 @@ export function App() {
           {!connected && (
             <div className="session-notice" role="status">
               {reconnecting
-                ? "Reconnexion en cours. L’écoute reste arrêtée jusqu’à votre reprise."
-                : "Connexion interrompue. L’écoute est arrêtée."}{" "}
-              <button onClick={reconnect}>Réessayer maintenant</button>
+                ? "Reconnecting. Listening stays off until you resume."
+                : "Connection lost. Listening is off."}{" "}
+              <button onClick={reconnect}>Try again now</button>
             </div>
           )}
           {!listening && connected && (
             <div className="session-notice">
-              Session en pause · Vous pouvez relire et exporter votre travail.{" "}
+              Session paused · You can review and export your work.{" "}
               <button
                 onClick={() => {
                   setConsent(false);
                   setResumePrompt(true);
                 }}
               >
-                Reprendre
+                Resume
               </button>
             </div>
           )}
@@ -289,22 +291,20 @@ export function App() {
                 aria-modal="true"
                 aria-labelledby="resume-title"
               >
-                <h2 id="resume-title">Reprendre avec Quorumy</h2>
+                <h2 id="resume-title">Resume with Quorumy</h2>
                 <p>
-                  La source reste celle de cette session. L’analyse reprend
-                  après votre confirmation.
+                  The source stays the one from this session. Analysis resumes
+                  after you confirm.
                 </p>
                 <Consent checked={consent} onChange={setConsent} />
                 <div>
-                  <button onClick={() => setResumePrompt(false)}>
-                    Annuler
-                  </button>
+                  <button onClick={() => setResumePrompt(false)}>Cancel</button>
                   <button
                     className="start"
                     disabled={!consent || !connected}
                     onClick={() => void command("resume")}
                   >
-                    Reprendre la session
+                    Resume the session
                   </button>
                 </div>
               </section>
@@ -337,7 +337,7 @@ export function App() {
           {(promptBarVisible || captureMode === "text") && (
             <section className="manual command-bar">
               <input
-                aria-label="Message à Quorumy"
+                aria-label="Message to Quorumy"
                 disabled={!listening || !connected}
                 maxLength={12000}
                 value={manual}
@@ -345,15 +345,15 @@ export function App() {
                 onKeyDown={(event) => event.key === "Enter" && inject()}
                 placeholder={
                   listening
-                    ? "Une idée, une question… Adressez-vous à Quorumy."
-                    : "Reprenez la session pour écrire à Quorumy"
+                    ? "An idea, a question… Address Quorumy."
+                    : "Resume the session to write to Quorumy"
                 }
               />
               <button
                 disabled={!listening || !connected || !manual.trim()}
                 onClick={inject}
-                title="Envoyer"
-                aria-label="Envoyer"
+                title="Send"
+                aria-label="Send"
               >
                 <Send size={17} />
               </button>
@@ -362,7 +362,7 @@ export function App() {
           {error && (
             <div className="error global-error" role="alert">
               {error}
-              <button aria-label="Fermer l’erreur" onClick={() => setError("")}>
+              <button aria-label="Dismiss error" onClick={() => setError("")}>
                 ×
               </button>
             </div>

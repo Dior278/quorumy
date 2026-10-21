@@ -37,7 +37,7 @@ export async function request(
     throw new Error(
       typeof error.detail === "string"
         ? error.detail
-        : `Opération indisponible (${response.status}).`,
+        : `This action is unavailable (${response.status}).`,
     );
   }
   return response;

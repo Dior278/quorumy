@@ -119,10 +119,10 @@ def build_minutes(
 
 
 LABELS = {
-    "decision": "Décision",
+    "decision": "Decision",
     "action": "Action",
     "question": "Question",
-    "risk": "Vigilance",
+    "risk": "Risk",
 }
 
 
@@ -135,28 +135,26 @@ def markdown_export(board: dict, objective: str) -> str:
         return value
 
     lines = [
-        "# Quorumy — carnet de réunion",
+        "# Quorumy — meeting record",
         "",
         plain(objective or "Discussion"),
         "",
-        "Propositions IA relues par les participants. Les citations ne garantissent pas l’interprétation.",
-        "Statuts et responsables sont déclaratifs ; les prénoms ne sont pas des identités vérifiées.",
+        "AI proposals reviewed by participants. Quotes do not guarantee the interpretation.",
+        "Statuses and owners are declarative; first names are not verified identities.",
         "",
     ]
     for note in board["notes"]:
         if note["status"] == "rejected":
             continue
-        status = "Validé" if note["status"] == "confirmed" else "À vérifier"
+        status = "Confirmed" if note["status"] == "confirmed" else "To review"
         lines += [f"## {LABELS[note['kind']]} · {status}", "", plain(note["text"])]
         if note["kind"] == "action":
             lines += [
-                f"Responsable : {plain(note['owner_name'] or 'non attribué')}",
-                f"Échéance confirmée : {note['due_date'] or 'non fixée'}",
+                f"Owner: {plain(note['owner_name'] or 'unassigned')}",
+                f"Confirmed due date: {note['due_date'] or 'not set'}",
             ]
         if note["reviewed_by"]:
-            lines += [
-                f"Relecture : {plain(note['reviewed_by'])} · {note['reviewed_at']}"
-            ]
+            lines += [f"Review: {plain(note['reviewed_by'])} · {note['reviewed_at']}"]
         for evidence in note["evidence"]:
             lines += [
                 f"> {plain(evidence['speaker'])} · {evidence['at']} · {evidence['utterance_id']} : {plain(evidence['text'])}"
@@ -181,7 +179,7 @@ def calendar_export(board: dict, room_id: str) -> str:
     lines = [
         "BEGIN:VCALENDAR",
         "VERSION:2.0",
-        "PRODID:-//Quorumy//Meeting actions//FR",
+        "PRODID:-//Quorumy//Meeting actions//EN",
         "CALSCALE:GREGORIAN",
     ]
     for note in board["notes"]:
@@ -202,14 +200,14 @@ def calendar_export(board: dict, room_id: str) -> str:
             "SUMMARY:" + escape(note["text"]),
             "DESCRIPTION:"
             + escape(
-                f"Responsable : {note['owner_name']}\nValidé par : {note['reviewed_by']}\nRappel Quorumy, sans invitation automatique."
+                f"Owner: {note['owner_name']}\nConfirmed by: {note['reviewed_by']}\nQuorumy reminder, not an automatic invitation."
             ),
             "TRANSP:TRANSPARENT",
             "END:VEVENT",
         ]
     if "BEGIN:VEVENT" not in lines:
         raise ValueError(
-            "Validez une action avec un responsable et une date avant l’export agenda."
+            "Confirm an action with an owner and a date before exporting the calendar."
         )
     lines.append("END:VCALENDAR")
     # RFC 5545: fold at 75 octets without splitting a UTF-8 codepoint.

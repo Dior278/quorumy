@@ -264,7 +264,7 @@ class QuorumyState(DomainModel):
     process_status: ProcessStatus = ProcessStatus.BOOTING
     session_status: SessionStatus = SessionStatus.IDLE
     session_id: str | None = None
-    title: str = "Nouvelle session"
+    title: str = "New session"
     title_locked: bool = False
     identity_name: str = "Quorumy"
     language: QuorumyLanguage = "en"

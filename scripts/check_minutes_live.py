@@ -1,4 +1,4 @@
-"""One real, billable structured extraction on a fictional French discussion."""
+"""One real, billable structured extraction on a fictional discussion."""
 
 import asyncio
 
@@ -13,23 +13,23 @@ async def main():
         {
             "utterance_id": "u1",
             "participant_id": "renard",
-            "speaker": "Renard",
+            "speaker": "You",
             "at": "2026-09-26T10:00:00Z",
-            "text": "Je prépare le prototype vendredi, sans lancer la production.",
+            "text": "I will prepare the prototype on Friday, without starting production.",
         },
         {
             "utterance_id": "u2",
             "participant_id": "hibou",
-            "speaker": "Hibou",
+            "speaker": "Owl",
             "at": "2026-09-26T10:01:00Z",
-            "text": "Nous retenons le prototype local pour la démonstration. Le budget reste à décider.",
+            "text": "We are keeping the local prototype for the demonstration. The budget is still open.",
         },
         {
             "utterance_id": "u3",
             "participant_id": "renard",
-            "speaker": "Renard",
+            "speaker": "You",
             "at": "2026-09-26T10:02:00Z",
-            "text": "Correction : je ne promets plus vendredi. La date dépend du test audio.",
+            "text": "Correction: I am no longer promising Friday. The date depends on the audio test.",
         },
     ]
     try:

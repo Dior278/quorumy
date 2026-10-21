@@ -11,7 +11,7 @@ from quorumy.workspace.config import TTSModelConfig
 from quorumy.workspace.core.models import AudioResult
 from quorumy.workspace.core.ports import AudioChunkCallback, TextTimingCallback
 
-# Kokoro n'a pas de voix allemande : une réunion en allemand utilise af_heart.
+# Kokoro has no German voice: a German meeting uses af_heart.
 _VOICES = {
     "fr": "ff_siwis",
     "en": "af_heart",
@@ -85,9 +85,9 @@ class HuggingFaceTTS:
     async def _speak(self, text: str, language: str) -> bytes:
         cleaned = " ".join(text.split()).strip()
         if not cleaned:
-            raise RuntimeError("Rien à lire.")
+            raise RuntimeError("Nothing to speak.")
         if not self.api_key:
-            raise RuntimeError("Voix Hugging Face indisponible.")
+            raise RuntimeError("Hugging Face voice is unavailable.")
         try:
             response = await self._client.post(
                 self.config.endpoint,
@@ -100,12 +100,12 @@ class HuggingFaceTTS:
                 },
             )
         except httpx.HTTPError as error:
-            raise RuntimeError("Voix Hugging Face indisponible.") from error
+            raise RuntimeError("Hugging Face voice is unavailable.") from error
         content_type = response.headers.get("content-type", "")
         if response.is_error or "json" in content_type or response.content[:1] == b"{":
             raise RuntimeError(
-                f"Voix Hugging Face indisponible (HTTP {response.status_code})."
+                f"Hugging Face voice is unavailable (HTTP {response.status_code})."
             )
         if not response.content:
-            raise RuntimeError("Voix Hugging Face vide.")
+            raise RuntimeError("Hugging Face voice returned empty audio.")
         return response.content

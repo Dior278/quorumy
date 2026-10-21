@@ -1,23 +1,23 @@
-# Contributions à Quorumy
+# Contributions to Quorumy
 
-## Socle Quorumy
+## Quorumy foundation
 
-Le moteur d’agents, les notes structurées, le tableau, la bibliothèque de sessions et l’interface viennent du [dépôt d’origine](https://github.com/KpihX/atlas).
+The agent engine, structured notes, board, session library, and interface come from the [original repository](https://github.com/KpihX/atlas).
 
-## Ajouts intégrés
+## Integrated additions
 
-| Apport | Résultat pour l’utilisateur |
+| Addition | What the user gets |
 | --- | --- |
-| Engagements vérifiables | Citations exactes, confirmation ou rejet, responsable et échéance |
-| Suivi des corrections | Les engagements deviennent périmés après de nouveaux échanges et doivent être relus |
-| Export calendrier | Téléchargement des actions confirmées, attribuées et datées |
-| Outils | Recherche web, transcription Whisper et voix Kokoro, via Hugging Face |
-| Contrôle de la session | Accord explicite, accès local, pause avec arrêt des tâches et reprise contrôlée |
-| Mémoire renforcée | Journal SQLite, conservation des anciennes sessions et protection des titres manuels |
-| Interface simplifiée | Parcours en français, menus regroupés et adaptation aux petits écrans |
-| Recherches contrôlables | Annulation, délai maximal, durée affichée et liens vers les sources |
-| Reconnexion | Conservation du brouillon et retour en pause après une coupure |
-| Fiabilité audio | Filtrage des retours de voix, corrections des replis vocaux et guide de partage dans l’appel |
-| Prise en main | Installation automatisée, tests, CI et archive de remise sans données privées |
+| Checkable commitments | Exact quotes, confirm or set aside, owner and due date |
+| Correction tracking | Commitments go stale after new exchanges and must be reread |
+| Calendar export | Download of confirmed actions that have an owner and a date |
+| Tools | Web search, Whisper transcription, and Kokoro voice, through Hugging Face |
+| Session control | Explicit agreement, local access, pause that stops tasks, and a controlled resume |
+| Stronger memory | SQLite journal, older sessions kept, and protection of manual titles |
+| Simpler interface | English UI, grouped menus, and small-screen layout |
+| Controllable research | Cancellation, maximum delay, displayed duration, and links to sources |
+| Reconnection | Draft kept, and a return to pause after a drop |
+| Audio reliability | Echo filtering, voice-fallback fixes, and an in-call sharing guide |
+| Getting started | Automated setup, tests, CI, and a handoff archive without private data |
 
-Les auteurs et les réutilisations sont détaillés dans [ATTRIBUTIONS.md](../ATTRIBUTIONS.md).
+Authors and reused work are detailed in [ATTRIBUTIONS.md](../ATTRIBUTIONS.md).

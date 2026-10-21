@@ -24,56 +24,51 @@ export function MeetingAudioSetup() {
   return (
     <details className="meeting-audio">
       <summary>
-        <Volume2 size={16} /> Faire entendre Quorumy dans l’appel
+        <Volume2 size={16} /> Let the call hear Quorumy
       </summary>
       <div className="meeting-audio-body">
         <p>
-          Vous entendez Quorumy sur cet ordinateur. Pour le faire entendre aux
-          participants, activez aussi le partage de son dans la réunion.
-          Utilisez un casque.
+          You hear Quorumy on this computer. To let other participants hear it,
+          also share sound in the meeting. Use headphones.
         </p>
         <ol>
           <li>
-            <strong>L’appel → Quorumy.</strong> Choisissez « Microphone + audio
-            partagé ». Au démarrage, sélectionnez l’onglet de la réunion avec
-            son audio.
+            <strong>Call → Quorumy.</strong> Choose “Microphone + shared audio”.
+            When you start, select the meeting tab with its audio.
           </li>
           <li>
-            <strong>Quorumy → l’appel.</strong> Dans Teams sur le web : Partager
-            → Écran, fenêtre ou onglet → Onglet. Sélectionnez Quorumy et activez
-            « Partager aussi l’audio de l’onglet ». Dans Meet : Présenter → Un
-            onglet, avec son audio.
+            <strong>Quorumy → call.</strong> In Teams on the web: Share →
+            Screen, window, or tab → Tab. Select Quorumy and turn on “Also share
+            tab audio”. In Meet: Present → A tab, with its audio.
           </li>
           <li>
-            <strong>Vérifiez ensemble.</strong> Jouez le son ci-dessous et
-            faites confirmer sa réception par un participant. Gardez la voix de
-            Quorumy activée.
+            <strong>Check together.</strong> Play the sound below and ask a
+            participant to confirm they heard it. Keep Quorumy’s voice on.
           </li>
         </ol>
         <button type="button" onClick={testSound} disabled={testing}>
-          <Volume2 size={16} /> {testing ? "Lecture…" : "Jouer le son de test"}
+          <Volume2 size={16} /> {testing ? "Playing…" : "Play the test sound"}
         </button>
         {result === "played" && (
           <p role="status">
-            Deux notes jouées dans cet onglet. Un participant doit confirmer les
-            avoir entendues.
+            Two notes played in this tab. A participant must confirm they heard
+            them.
           </p>
         )}
         {result === "error" && (
           <p role="alert">
-            Le son n’a pas pu être joué. Vérifiez la sortie audio du navigateur,
-            puis réessayez.
+            The sound could not be played. Check the browser audio output, then
+            try again.
           </p>
         )}
         <p className="meeting-audio-help">
-          Choisissez l’onglet de la réunion pour l’écoute, pas tout le son de
-          l’ordinateur : Quorumy risquerait de s’entendre. Le partage vers
-          l’appel se règle dans votre plateforme.
+          Choose the meeting tab for listening, not all computer sound: Quorumy
+          could hear itself. Sharing into the call is set in your meeting app.
         </p>
         <p className="meeting-audio-links">
-          Guides audio :{" "}
+          Audio guides:{" "}
           <a
-            href="https://support.google.com/meet/answer/9308856?hl=fr"
+            href="https://support.google.com/meet/answer/9308856?hl=en"
             target="_blank"
             rel="noreferrer"
           >
@@ -95,8 +90,8 @@ export function MeetingAudioSetup() {
           >
             Zoom
           </a>
-          . Sur Zoom installé, utilisez « Partager le son » ; vérifiez aussi
-          l’absence d’écho.
+          . On the Zoom app, use “Share sound”; also check that there is no
+          echo.
         </p>
       </div>
     </details>

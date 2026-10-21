@@ -40,14 +40,14 @@ function renderControls(
 describe("SessionControls", () => {
   it("connects every visible action", () => {
     const actions = renderControls();
-    fireEvent.click(screen.getByTitle("Organiser le tableau"));
-    fireEvent.click(screen.getByTitle("Couper la voix"));
-    fireEvent.click(screen.getByTitle("Masquer les sous-titres"));
-    fireEvent.click(screen.getByTitle("Masquer la saisie"));
-    fireEvent.click(screen.getByTitle("Renommer la session"));
-    fireEvent.click(screen.getByTitle("Exporter la session"));
-    fireEvent.click(screen.getByTitle("Mettre en pause"));
-    fireEvent.click(screen.getByTitle("Terminer la session"));
+    fireEvent.click(screen.getByTitle("Organize the board"));
+    fireEvent.click(screen.getByTitle("Mute voice"));
+    fireEvent.click(screen.getByTitle("Hide subtitles"));
+    fireEvent.click(screen.getByTitle("Hide typing"));
+    fireEvent.click(screen.getByTitle("Rename the session"));
+    fireEvent.click(screen.getByTitle("Export the session"));
+    fireEvent.click(screen.getByTitle("Pause"));
+    fireEvent.click(screen.getByTitle("End the session"));
     expect(actions.onCurate).toHaveBeenCalledOnce();
     expect(actions.onToggleVoice).toHaveBeenCalledOnce();
     expect(actions.onToggleSubtitles).toHaveBeenCalledOnce();
@@ -61,7 +61,7 @@ describe("SessionControls", () => {
   it("disables curation when there is no board content", () => {
     const actions = renderControls({ canCurate: false });
     const button = screen.getByTitle(
-      "Aucune idée à organiser",
+      "No ideas to organize",
     ) as HTMLButtonElement;
     expect(button.disabled).toBe(true);
     fireEvent.click(button);
@@ -75,15 +75,13 @@ describe("SessionControls", () => {
       promptBarVisible: false,
     });
     expect(
-      screen.getByTitle("Activer la voix").getAttribute("aria-pressed"),
+      screen.getByTitle("Turn voice on").getAttribute("aria-pressed"),
     ).toBe("false");
     expect(
-      screen
-        .getByTitle("Afficher les sous-titres")
-        .getAttribute("aria-pressed"),
+      screen.getByTitle("Show subtitles").getAttribute("aria-pressed"),
     ).toBe("false");
-    expect(
-      screen.getByTitle("Afficher la saisie").getAttribute("aria-pressed"),
-    ).toBe("false");
+    expect(screen.getByTitle("Show typing").getAttribute("aria-pressed")).toBe(
+      "false",
+    );
   });
 });

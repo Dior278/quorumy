@@ -39,14 +39,14 @@ export function AccountGate({ error, onSubmit }: Props) {
     <main className="account-gate">
       <section className="launch-card">
         <p className="eyebrow">QUORUMY</p>
-        <h1>Un compte, votre clé Hugging Face.</h1>
+        <h1>One account, your Hugging Face key.</h1>
         <p>
-          Quorumy suit la réunion, cherche et repère les incohérences. Il ne
-          parle que lorsque la parole lui est donnée. La clé reste sur le
-          serveur, jamais dans la page.
+          Quorumy follows the meeting, researches, and spots inconsistencies. It
+          speaks only when given the floor. The key stays on the server, never
+          in the page.
         </p>
         <label>
-          Nom
+          Name
           <input
             value={name}
             autoComplete="username"
@@ -54,7 +54,7 @@ export function AccountGate({ error, onSubmit }: Props) {
           />
         </label>
         <label>
-          Mot de passe
+          Password
           <input
             type="password"
             value={password}
@@ -65,7 +65,7 @@ export function AccountGate({ error, onSubmit }: Props) {
           />
         </label>
         <label>
-          Clé Hugging Face
+          Hugging Face key
           <input
             type="password"
             value={hfToken}
@@ -75,7 +75,7 @@ export function AccountGate({ error, onSubmit }: Props) {
           />
         </label>
         <label>
-          Modèle
+          Model
           <input
             value={model}
             onChange={(event) => {
@@ -86,14 +86,14 @@ export function AccountGate({ error, onSubmit }: Props) {
         </label>
         <p className="account-hint">
           {mode === "login"
-            ? "Sans modification, la clé et le modèle déjà enregistrés sont conservés."
-            : "Ajoutez :cheapest, :fastest ou :preferred pour choisir comment Hugging Face route le modèle."}
+            ? "Leave these unchanged to keep the saved key and model."
+            : "Add :cheapest, :fastest, or :preferred to choose how Hugging Face routes the model."}
         </p>
         {(localError || error) && (
           <p className="error">{localError || error}</p>
         )}
         <button type="button" disabled={busy} onClick={() => void submit()}>
-          {mode === "register" ? "Créer le compte" : "Entrer"}
+          {mode === "register" ? "Create account" : "Sign in"}
         </button>
         <button
           type="button"
@@ -104,7 +104,9 @@ export function AccountGate({ error, onSubmit }: Props) {
             )
           }
         >
-          {mode === "register" ? "J’ai déjà un compte" : "Créer un compte"}
+          {mode === "register"
+            ? "I already have an account"
+            : "Create an account"}
         </button>
       </section>
     </main>

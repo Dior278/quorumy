@@ -110,11 +110,11 @@ class WorkspaceEngine(QuorumyEngine):
     async def start_session(self, payload):
         if payload.get("consent") is not True:
             raise ValueError(
-                "Confirmez l’accord des personnes avant de démarrer l’analyse."
+                "Confirm that the people involved agree before analysis starts."
             )
         if payload.get("capture_mode") != "text" and not self.stt.available:
             raise ValueError(
-                "La transcription audio n’est pas configurée. Choisissez Texte ou configurez un fournisseur vocal."
+                "Audio transcription is not configured. Choose Text or configure a voice provider."
             )
         try:
             await super().start_session(payload)
@@ -123,13 +123,13 @@ class WorkspaceEngine(QuorumyEngine):
             self.state.consent_at = None
             await self.stt.stop()
             await self._commit(
-                "session", "Démarrage interrompu : transcription indisponible"
+                "session", "Start interrupted: transcription unavailable"
             )
             raise
         self.state.consent_at = now_iso() if payload.get("consent") else None
         await self._commit(
             "consent",
-            "Analyse autorisée",
+            "Analysis allowed",
         )
 
     async def _prewarm_presence_cue(self):
@@ -178,13 +178,13 @@ class WorkspaceEngine(QuorumyEngine):
     async def _start_stt(self):
         if self.state.capture_mode == "text":
             self.state.health["stt"] = Health(
-                status="standby", detail="Session texte : aucun audio capturé"
+                status="standby", detail="Text session: no audio captured"
             )
             return
         await super()._start_stt()
         if self.state.health["stt"].status in {"down", "unconfigured"}:
             raise ValueError(
-                "La transcription audio est indisponible. Vérifiez le fournisseur vocal ou créez une session texte."
+                "Audio transcription is unavailable. Check the voice provider or start a text session."
             )
 
     def _session_accepts_results(self, session_id):
@@ -198,7 +198,7 @@ class WorkspaceEngine(QuorumyEngine):
         if self.state.capture_mode == "text" or not self.state.consent_at:
             return
         if len(audio) > 131072:
-            raise ValueError("Trame audio trop volumineuse.")
+            raise ValueError("Audio frame is too large.")
         await super().ingest_audio(audio)
 
     async def _cancel_work(self):
@@ -239,7 +239,7 @@ class WorkspaceEngine(QuorumyEngine):
 
     async def session_command(self, command, *, finalize=True):
         if command == "resume" and not self.state.consent_at:
-            raise ValueError("Confirmez l’accord avant de reprendre l’assistant.")
+            raise ValueError("Confirm agreement before resuming the companion.")
         if command in {"pause", "stop"}:
             await self._cancel_work()
         if command == "pause":
@@ -248,8 +248,8 @@ class WorkspaceEngine(QuorumyEngine):
             await self._cancel_speech_tasks()
             await self._interrupt_playback("session_paused")
             await self.stt.stop()
-            self.state.health["stt"] = Health(status="standby", detail="En pause")
-            await self._commit("session", "Assistant en pause")
+            self.state.health["stt"] = Health(status="standby", detail="Paused")
+            await self._commit("session", "Companion paused")
         else:
             await super().session_command(command)
         if command == "stop":
@@ -277,14 +277,14 @@ class WorkspaceEngine(QuorumyEngine):
                 self.state.partial = ""
                 await self._commit(
                     "audio.echo_filtered",
-                    "Retour probable de la voix de Quorumy écarté",
+                    "Likely echo of Quorumy’s voice was dropped",
                 )
                 if not cleaned.strip():
                     return
                 text = cleaned
         if len(self.state.transcript) >= 10000:
             raise ValueError(
-                "Cette session atteint 10 000 interventions. Créez une nouvelle session."
+                "This session has reached 10,000 turns. Start a new session."
             )
         if self.state.minutes:
             self.state.minutes["stale"] = True
@@ -297,7 +297,7 @@ class WorkspaceEngine(QuorumyEngine):
                 "text": u.text,
                 "speaker": u.speaker
                 if u.participant_id
-                else ("Renard" if u.source == "manual" else "Voix non identifiée"),
+                else ("You" if u.source == "manual" else "Unidentified voice"),
                 "participant_id": u.participant_id
                 or ("renard" if u.source == "manual" else "audio"),
                 "at": u.committed_at,
@@ -309,51 +309,51 @@ class WorkspaceEngine(QuorumyEngine):
         async with self.minutes_lock:
             if not self.state.consent_at:
                 raise ValueError(
-                    "Reprenez la session avec l’accord des personnes avant l’analyse."
+                    "Resume the session with people’s agreement before analysis."
                 )
             snapshot = self.state.model_copy(deep=True)
             if not snapshot.session_id or not snapshot.transcript:
-                raise ValueError(
-                    "Ajoutez des interventions avant de préparer le carnet."
-                )
+                raise ValueError("Add turns before preparing the record.")
             # Explicit bounded extraction, never silently drop old commitments.
             evidence = self.evidence(snapshot)
             if sum(len(u["text"]) for u in evidence) > 160000:
                 raise ValueError(
-                    "Carnet trop volumineux pour cette extraction. Exportez la session pour la relire."
+                    "The record is too large for this extraction. Export the session to review it."
                 )
             proposal = await self.backend.meeting_minutes(evidence)
             if self.state.session_id != snapshot.session_id:
-                raise ValueError("La session a changé pendant la préparation.")
+                raise ValueError(
+                    "The session changed while proposals were being prepared."
+                )
             board = build_minutes(proposal, evidence, self.state.minutes)
             board["stale"] = len(self.state.transcript) != len(snapshot.transcript)
             self.state.minutes = board
-            await self._commit("minutes.generated", "Propositions sourcées à relire")
+            await self._commit("minutes.generated", "Sourced proposals ready to review")
             return board
 
     async def review_minutes(
-        self, review: Review, *, reviewer="Renard", participant_id=None, organizer=True
+        self, review: Review, *, reviewer="You", participant_id=None, organizer=True
     ):
         async with self.minutes_lock:
             board = self.state.minutes
             if not board or review.version != board["version"] or board["stale"]:
-                raise ValueError("Le carnet a changé. Actualisez-le avant de valider.")
+                raise ValueError("The record changed. Refresh it before confirming.")
             note = next((n for n in board["notes"] if n["id"] == review.note_id), None)
             if note is None:
-                raise ValueError("Proposition introuvable.")
+                raise ValueError("Proposal not found.")
             if not organizer and (
                 note["owner_id"] != participant_id
                 or review.owner_id != note["owner_id"]
             ):
                 raise ValueError(
-                    "Seuls l’organisateur ou le responsable désigné peuvent valider, et seul l’organisateur peut réattribuer."
+                    "Only the organizer or the assigned owner can confirm, and only the organizer can reassign."
                 )
             speakers = {
                 u["participant_id"]: u["speaker"] for u in self.evidence(self.state)
             }
             speakers.update({p.id: p.name for p in self.state.participants})
             if review.owner_id and review.owner_id not in speakers:
-                raise ValueError("Responsable inconnu.")
+                raise ValueError("Unknown owner.")
             note.update(
                 status=review.status,
                 owner_id=review.owner_id,

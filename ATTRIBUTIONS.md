@@ -1,23 +1,23 @@
-# Sources et auteurs
+# Sources and authors
 
-## Socle du projet
+## Project foundation
 
-Quorumy adapte le moteur de réunion, les notes, le tableau, l’interface et les tests associés publiés dans [ce dépôt](https://github.com/KpihX/atlas). La version précédente s’appuyait sur [Meeting Sidecar](https://github.com/KpihX/meeting-sidecar).
+Quorumy adapts the meeting engine, notes, board, interface, and related tests published in [this repository](https://github.com/KpihX/atlas). The previous version was based on [Meeting Sidecar](https://github.com/KpihX/meeting-sidecar).
 
-Les ajouts propres à Quorumy sont décrits dans [Contributions](docs/CONTRIBUTIONS.md).
+Quorumy’s own additions are described in [Contributions](docs/CONTRIBUTIONS.md).
 
-Ce socle ne comporte pas de licence explicite dans la version intégrée. Sa réutilisation s’inscrit dans la collaboration de l’équipe ; aucune licence générale de redistribution n’est déclarée ici.
+That foundation has no explicit license in the integrated version. Its reuse is part of the team’s collaboration; no general redistribution license is declared here.
 
-## Auteurs
+## Authors
 
 - KAMDEM POUOKAM Ivann Harold
 - DEHAYEM KENFOUO Sylvain
 - WADOH TCHINDA Pavel
 
-Les contributions du dépôt d’origine restent attribuées à leurs auteurs. Le développement et les tests ont bénéficié d’une assistance IA.
+Contributions from the original repository remain attributed to their authors. Development and tests benefited from AI assistance.
 
-## Dépendances et références
+## Dependencies and references
 
-Les dépendances sont déclarées dans `pyproject.toml` et `frontend/package.json`, avec leurs versions verrouillées. Leurs licences et notices restent applicables. Les icônes viennent de Lucide.
+Dependencies are declared in `pyproject.toml` and `frontend/package.json`, with locked versions. Their licenses and notices still apply. Icons come from Lucide.
 
-Les [références de conception](docs/recherche-besoins-reunions.md) documentent les inspirations. Les services externes sont utilisés selon la configuration du projet.
+The [design references](docs/recherche-besoins-reunions.md) document the inspirations. External services are used according to the project configuration.

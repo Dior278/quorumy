@@ -10,11 +10,9 @@ def main() -> int:
         paths = source_files(ROOT)
         check_secrets(ROOT, paths)
     except (ValueError, OSError, subprocess.CalledProcessError) as exc:
-        print(f"Échec : {exc}")
+        print(f"Failed: {exc}")
         return 1
-    print(
-        f"OK : {len(paths)} fichiers, aucune clé configurée ou signature connue détectée."
-    )
+    print(f"OK: {len(paths)} files, no configured key or known signature detected.")
     return 0
 
 

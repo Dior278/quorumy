@@ -41,10 +41,10 @@ export function SessionControls(p: Props) {
       <button
         className="control-pause"
         onClick={p.onPauseResume}
-        title={p.listening ? "Mettre en pause" : "Reprendre l’assistant"}
+        title={p.listening ? "Pause" : "Resume the companion"}
       >
         {p.listening ? <Pause size={16} /> : <Play size={16} />}
-        <span>{p.listening ? "Pause" : "Reprendre"}</span>
+        <span>{p.listening ? "Pause" : "Resume"}</span>
       </button>
       <details
         className="session-menu"
@@ -52,10 +52,10 @@ export function SessionControls(p: Props) {
           if (e.key === "Escape") e.currentTarget.open = false;
         }}
       >
-        <summary aria-label="Options de la session">•••</summary>
+        <summary aria-label="Session options">•••</summary>
         <div className="session-menu-content">
           <label>
-            Langue
+            Language
             <select
               value={p.language}
               onChange={(e) => p.onLanguage(e.target.value as QuorumyLanguage)}
@@ -71,68 +71,54 @@ export function SessionControls(p: Props) {
           <button
             disabled={!p.canCurate || p.curatorRunning || !p.listening}
             onClick={p.onCurate}
-            title={
-              !p.canCurate ? "Aucune idée à organiser" : "Organiser le tableau"
-            }
+            title={!p.canCurate ? "No ideas to organize" : "Organize the board"}
           >
             <Sparkles size={17} />
-            Organiser le tableau
+            Organize the board
           </button>
           <button
             onClick={p.onToggleVoice}
             aria-pressed={p.voiceMode === "active"}
-            title={
-              p.voiceMode === "muted" ? "Activer la voix" : "Couper la voix"
-            }
+            title={p.voiceMode === "muted" ? "Turn voice on" : "Mute voice"}
           >
             {p.voiceMode === "muted" ? (
               <VolumeX size={17} />
             ) : (
               <Volume2 size={17} />
             )}
-            Voix {p.voiceMode === "active" ? "activée" : "coupée"}
+            Voice {p.voiceMode === "active" ? "on" : "off"}
           </button>
           <button
             onClick={p.onToggleSubtitles}
             aria-pressed={p.subtitlesEnabled}
-            title={
-              p.subtitlesEnabled
-                ? "Masquer les sous-titres"
-                : "Afficher les sous-titres"
-            }
+            title={p.subtitlesEnabled ? "Hide subtitles" : "Show subtitles"}
           >
             {p.subtitlesEnabled ? (
               <Captions size={17} />
             ) : (
               <CaptionsOff size={17} />
             )}
-            Sous-titres
+            Subtitles
           </button>
           <button
             onClick={p.onTogglePromptBar}
             aria-pressed={p.promptBarVisible}
-            title={
-              p.promptBarVisible ? "Masquer la saisie" : "Afficher la saisie"
-            }
+            title={p.promptBarVisible ? "Hide typing" : "Show typing"}
           >
             <MessageSquareText size={17} />
-            Saisie au clavier
+            Keyboard input
           </button>
-          <button onClick={p.onRename} title="Renommer la session">
+          <button onClick={p.onRename} title="Rename the session">
             <Pencil size={17} />
-            Renommer
+            Rename
           </button>
-          <button onClick={p.onExport} title="Exporter la session">
+          <button onClick={p.onExport} title="Export the session">
             <Download size={17} />
-            Exporter la session
+            Export the session
           </button>
-          <button
-            className="danger"
-            onClick={p.onEnd}
-            title="Terminer la session"
-          >
+          <button className="danger" onClick={p.onEnd} title="End the session">
             <Square size={16} />
-            Terminer la session
+            End the session
           </button>
         </div>
       </details>

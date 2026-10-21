@@ -1193,7 +1193,7 @@
           "title": {
             "type": "string",
             "title": "Title",
-            "default": "Nouvelle session"
+            "default": "New session"
           },
           "title_locked": {
             "type": "boolean",

@@ -1,4 +1,4 @@
-"""Quorumy : un moteur, une API, une interface."""
+"""Quorumy: one engine, one API, one interface."""
 
 import argparse
 
@@ -10,12 +10,12 @@ app = create_app()
 def main():
     import uvicorn
 
-    parser = argparse.ArgumentParser(description="Quorumy, coéquipier de réunion")
+    parser = argparse.ArgumentParser(description="Quorumy, a meeting companion")
     parser.add_argument("--port", type=int, default=8765)
     parser.add_argument(
         "--host",
         default="0.0.0.0",
-        help="Adresse d’écoute. 0.0.0.0 rend Quorumy accessible sur le réseau.",
+        help="Bind address. 0.0.0.0 makes Quorumy reachable on the network.",
     )
     parser.add_argument("--ssl-certfile", default=None)
     parser.add_argument("--ssl-keyfile", default=None)

@@ -1,16 +1,16 @@
-# Besoins et références
+# Needs and references
 
-Ces références ont guidé la conception de Quorumy. Elles ne constituent pas une étude comparative des produits.
+These references guided the design of Quorumy. They are not a comparative study of products.
 
-| Besoin | Choix dans Quorumy | Référence |
+| Need | Choice in Quorumy | Reference |
 | --- | --- | --- |
-| Vérifier les résumés et les actions | Citations consultables et validation humaine | [Récapitulatif Teams](https://support.microsoft.com/en-gb/teams/meetings-events/recap-a-teams-meeting) |
-| Maîtriser l’écoute et les données | Accord avant capture, pause et mémoire locale | [Harvard — AI Assistant Guidelines](https://www.huit.harvard.edu/ai-assistant-guidelines) |
-| Comprendre une réponse IA | Demande d’origine et sources accessibles | [FAQ Copilot dans Teams](https://support.microsoft.com/en-us/teams/platform/frequently-asked-questions-about-copilot-in-microsoft-teams) |
-| Gérer les coupures | Reconnexion avec reprise en pause | [Aide Google Meet](https://support.google.com/meet/answer/14754931?co=GENIE.Platform%3DDesktop&hl=en-CA) |
-| Mesurer les attentes | Durée des recherches affichée | [Métriques LiveKit](https://docs.livekit.io/testing/observability/data/) |
-| Retrouver les actions hors de l’application | Export calendrier | [iCalendar — RFC 5545](https://www.rfc-editor.org/rfc/rfc5545) |
+| Check summaries and actions | Readable quotes and human validation | [Teams recap](https://support.microsoft.com/en-gb/teams/meetings-events/recap-a-teams-meeting) |
+| Control listening and data | Agreement before capture, pause, and local memory | [Harvard — AI Assistant Guidelines](https://www.huit.harvard.edu/ai-assistant-guidelines) |
+| Understand an AI answer | Original request and reachable sources | [Copilot in Teams FAQ](https://support.microsoft.com/en-us/teams/platform/frequently-asked-questions-about-copilot-in-microsoft-teams) |
+| Handle drops | Reconnect and resume in pause | [Google Meet help](https://support.google.com/meet/answer/14754931?co=GENIE.Platform%3DDesktop&hl=en-CA) |
+| Measure expectations | Research duration shown | [LiveKit metrics](https://docs.livekit.io/testing/observability/data/) |
+| Find actions outside the app | Calendar export | [iCalendar — RFC 5545](https://www.rfc-editor.org/rfc/rfc5545) |
 
-Autres références de conception : [VoiceAgentRAG](https://github.com/SalesforceAIResearch/VoiceAgentRAG), [thoughtful-agents](https://github.com/xybruceliu/thoughtful-agents) et [Speaking Meeting Bot](https://github.com/Meeting-Baas/speaking-meeting-bot), pour les recherches et les tours de parole ; [Structured Outputs](https://developers.openai.com/api/docs/guides/structured-outputs), pour les sorties structurées.
+Other design references: [VoiceAgentRAG](https://github.com/SalesforceAIResearch/VoiceAgentRAG), [thoughtful-agents](https://github.com/xybruceliu/thoughtful-agents), and [Speaking Meeting Bot](https://github.com/Meeting-Baas/speaking-meeting-bot), for research and turn-taking; [Structured Outputs](https://developers.openai.com/api/docs/guides/structured-outputs), for structured outputs.
 
-La reprise de code Quorumy et les auteurs sont déclarés dans [ATTRIBUTIONS.md](../ATTRIBUTIONS.md).
+Quorumy code reuse and the authors are declared in [ATTRIBUTIONS.md](../ATTRIBUTIONS.md).

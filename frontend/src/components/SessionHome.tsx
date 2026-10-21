@@ -32,8 +32,7 @@ export function Consent({
         onChange={(e) => onChange(e.target.checked)}
       />
       <span>
-        Les personnes concernées sont informées et d’accord pour l’analyse par
-        l’IA.
+        The people involved have been told and agree to analysis by AI.
       </span>
     </label>
   );
@@ -69,20 +68,20 @@ export function SessionHome(p: Props) {
       <div className="home-hero">
         <div className="hero-copy">
           <p className="eyebrow">
-            <span className="tiny-orbit" /> UN PEU PLUS LOIN, ENSEMBLE
+            <span className="tiny-orbit" /> A STEP AHEAD, TOGETHER
           </p>
           <h1>
-            Toute la conversation.
+            The whole conversation.
             <br />
-            <em>Une longueur d’avance.</em>
+            <em>One step ahead.</em>
           </h1>
           <p className="hero-description">
-            Vous faites avancer les idées. Quorumy garde le fil, vérifie ce qui
-            se dit et ne parle que lorsque la parole lui est donnée.
+            You move the ideas forward. Quorumy keeps the thread, checks what is
+            said, and speaks only when given the floor.
           </p>
           <div className="hero-caption">
-            <span className="caption-line" /> À vos côtés, sans rejoindre
-            l’appel.
+            <span className="caption-line" /> Beside you, without joining the
+            call.
           </div>
         </div>
         <div className="launch-card">
@@ -90,27 +89,27 @@ export function SessionHome(p: Props) {
             <div className="quorumy-orbit">
               <img src="/quorumy-mark.svg" alt="" />
             </div>
-            <span>VOTRE PROCHAINE CONVERSATION</span>
+            <span>YOUR NEXT CONVERSATION</span>
           </div>
-          <h2>Faites une place à Quorumy.</h2>
+          <h2>Make room for Quorumy.</h2>
           <p>
-            Ouvrez votre réunion habituelle, puis choisissez ce que Quorumy peut
-            écouter.
+            Open your usual meeting, then choose what Quorumy is allowed to
+            hear.
           </p>
           <label>
-            Source de la conversation
+            Conversation source
             <select
               value={p.captureMode}
               onChange={(e) => p.onCapture(e.target.value as CaptureMode)}
               disabled={p.starting}
             >
-              <option value="text">Texte · sans microphone</option>
+              <option value="text">Text · no microphone</option>
               <option value="microphone">Microphone</option>
               <option value="mixed" disabled={!systemSupported}>
-                Microphone + audio partagé
+                Microphone + shared audio
               </option>
               <option value="system" disabled={!systemSupported}>
-                Audio d’un onglet ou du système
+                Tab or system audio
               </option>
             </select>
           </label>
@@ -119,10 +118,10 @@ export function SessionHome(p: Props) {
           )}
           <details className="launch-options">
             <summary>
-              Langue · {LANGUAGES.find((l) => l.value === p.language)?.label}
+              Language · {LANGUAGES.find((l) => l.value === p.language)?.label}
             </summary>
             <label>
-              Langue de la session
+              Session language
               <select
                 value={p.language}
                 onChange={(e) =>
@@ -143,12 +142,12 @@ export function SessionHome(p: Props) {
             disabled={!p.connected || !p.consent || p.starting}
             onClick={p.onStart}
           >
-            {p.starting ? "Préparation…" : "Démarrer une session"}
+            {p.starting ? "Preparing…" : "Start a session"}
             <ArrowUpRight size={18} />
           </button>
           <p className="privacy-note">
-            <ShieldCheck size={14} /> Mémoire sur cet ordinateur. Analyse via
-            les services configurés.
+            <ShieldCheck size={14} /> Memory stays on this computer. Analysis
+            uses the configured services.
           </p>
           {p.error && (
             <p className="error" role="alert">
@@ -161,53 +160,49 @@ export function SessionHome(p: Props) {
         <article>
           <AudioLines size={20} />
           <div>
-            <span>01 / PENDANT</span>
-            <h3>Gardez le fil.</h3>
-            <p>
-              Des notes qui suivent la discussion, sans interrompre vos idées.
-            </p>
+            <span>01 / DURING</span>
+            <h3>Keep the thread.</h3>
+            <p>Notes that follow the discussion without interrupting ideas.</p>
           </div>
         </article>
         <article>
           <Layers3 size={20} />
           <div>
-            <span>02 / PLUS LOIN</span>
-            <h3>Explorez ensemble.</h3>
-            <p>Des recherches en parallèle, des résultats et leurs sources.</p>
+            <span>02 / FURTHER</span>
+            <h3>Explore together.</h3>
+            <p>Parallel research, results, and their sources.</p>
           </div>
         </article>
         <article>
           <FileCheck2 size={20} />
           <div>
-            <span>03 / ENSUITE</span>
-            <h3>Retenez l’essentiel.</h3>
-            <p>
-              Des engagements à relire et confirmer, avec les paroles d’origine.
-            </p>
+            <span>03 / AFTER</span>
+            <h3>Keep what matters.</h3>
+            <p>Commitments to review and confirm, with the original words.</p>
           </div>
         </article>
       </div>
       {openCommitments > 0 && (
         <p className="memory-banner">
           {openCommitments > 1
-            ? `${openCommitments} engagements confirmés vous attendent. La prochaine réunion commencera avec eux.`
-            : `${openCommitments} engagement confirmé vous attend. La prochaine réunion commencera avec eux.`}
+            ? `${openCommitments} confirmed commitments are waiting. The next meeting will start with them.`
+            : `${openCommitments} confirmed commitment is waiting. The next meeting will start with it.`}
         </p>
       )}
-      <section className="session-library" aria-label="Sessions enregistrées">
+      <section className="session-library" aria-label="Saved sessions">
         <div className="session-library-heading">
           <div>
-            <p className="eyebrow">VOTRE MÉMOIRE</p>
-            <h2>Reprendre le fil</h2>
+            <p className="eyebrow">YOUR MEMORY</p>
+            <h2>Pick up the thread</h2>
           </div>
           <span>
-            {p.sessions.length} session{p.sessions.length > 1 ? "s" : ""}
+            {p.sessions.length} session{p.sessions.length === 1 ? "" : "s"}
           </span>
         </div>
         {p.sessions.length === 0 ? (
           <p className="library-empty">
-            Vos conversations apparaîtront ici. Vous pourrez les relire et les
-            exporter à tout moment.
+            Your conversations will appear here. You can reread and export them
+            at any time.
           </p>
         ) : (
           <div className="session-list">
@@ -220,14 +215,15 @@ export function SessionHome(p: Props) {
                 >
                   <span>
                     <strong>{session.title}</strong>
-                    <small>
-                      {session.preview || "Aucune intervention enregistrée"}
-                    </small>
+                    <small>{session.preview || "No turn recorded"}</small>
                   </span>
                   <span className="session-meta">
-                    <small>{session.utterance_count} interventions</small>
+                    <small>
+                      {session.utterance_count} turn
+                      {session.utterance_count === 1 ? "" : "s"}
+                    </small>
                     <time>
-                      {new Date(session.updated_at).toLocaleDateString("fr-FR")}
+                      {new Date(session.updated_at).toLocaleDateString("en")}
                     </time>
                   </span>
                 </button>
@@ -237,10 +233,10 @@ export function SessionHome(p: Props) {
                       p.onRename(session.session_id, session.title)
                     }
                   >
-                    Renommer
+                    Rename
                   </button>
                   <button onClick={() => p.onExport(session.session_id)}>
-                    Exporter
+                    Export
                   </button>
                   <button
                     className="danger"
@@ -248,7 +244,7 @@ export function SessionHome(p: Props) {
                       p.onDelete(session.session_id, session.title)
                     }
                   >
-                    Supprimer
+                    Delete
                   </button>
                 </div>
               </article>
@@ -257,7 +253,7 @@ export function SessionHome(p: Props) {
         )}
       </section>
       <p className="home-credit">
-        Quorumy suit la réunion et lève la main quand quelque chose urge.
+        Quorumy follows the meeting and raises a hand when something is urgent.
       </p>
     </section>
   );

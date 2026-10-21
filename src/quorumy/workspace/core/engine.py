@@ -456,7 +456,7 @@ class QuorumyEngine:
             text=cleaned,
             source=source,
             language=self.state.language,
-            speaker="Renard" if source == "manual" else "Voix non identifiée",
+            speaker="You" if source == "manual" else "Unidentified voice",
             participant_id="renard" if source == "manual" else "",
         )
         self.state.room_epoch += 1
@@ -469,7 +469,7 @@ class QuorumyEngine:
         logger.info("transcript.committed source=%s length=%d", source, len(cleaned))
         await self._commit("heard", cleaned)
         if (
-            self.state.title == "Nouvelle session"
+            self.state.title == "New session"
             or len(self.state.transcript) - self.state.title_cursor >= 8
         ):
             self._spawn(self._rename_session())
@@ -771,7 +771,7 @@ class QuorumyEngine:
                         pending = (result.speech or mission_task.summary).strip()
                         await self._set_hand(
                             SpeechGate.hand_level(decision) or "raised",
-                            pending[:240] or "Un point à signaler",
+                            pending[:240] or "Something to flag",
                             pending[:800] or mission_task.summary,
                             [mission_task.id],
                         )
@@ -810,7 +810,7 @@ class QuorumyEngine:
     async def cancel_mission(self, task_id: str) -> bool:
         task = next((item for item in self.state.tasks if item.id == task_id), None)
         if task is None:
-            raise ValueError("Recherche introuvable.")
+            raise ValueError("Research not found.")
         if task.status not in {"queued", "running"}:
             return False
         task.status, task.phase, task.error = "canceled", "complete", "canceled_by_user"
@@ -1406,19 +1406,19 @@ class QuorumyEngine:
         else:
             other = await self.store.load(session_id)
             if other is None:
-                raise ValueError("Réunion introuvable.")
+                raise ValueError("Meeting not found.")
             self._mark_commitment_done(other, note_id)
             await self.store.save(other)
         for item in self.state.carried:
             if item.session_id == session_id and item.id == note_id:
                 item.status = "done"
-        await self._commit("commitment.done", "Engagement clos")
+        await self._commit("commitment.done", "Commitment closed")
 
     @staticmethod
     def _mark_commitment_done(state: QuorumyState, note_id: str) -> None:
         notes = (state.minutes or {}).get("notes")
         if not isinstance(notes, list):
-            raise ValueError("Engagement introuvable.")
+            raise ValueError("Commitment not found.")
         note = next(
             (
                 item
@@ -1428,7 +1428,7 @@ class QuorumyEngine:
             None,
         )
         if note is None or note.get("status") != "confirmed":
-            raise ValueError("Engagement introuvable.")
+            raise ValueError("Commitment not found.")
         note["status"] = "done"
 
     async def _raise_hand(self, utterance: Utterance, decision: Decision) -> None:
@@ -1495,7 +1495,7 @@ class QuorumyEngine:
         if self.state.hand.level == "idle":
             return
         self.state.hand = HandSignal()
-        await self._activity("hand.dismissed", "La main est baissée")
+        await self._activity("hand.dismissed", "The hand is down")
         await self.store.save(self.state)
         await self._broadcast_state()
 
@@ -1836,7 +1836,7 @@ class QuorumyEngine:
             )
             self._stt_started_at = monotonic()
             self.state.health["stt"] = Health(
-                status="ok", detail="Transcription connectée"
+                status="ok", detail="Transcription connected"
             )
         except Exception as error:
             self.state.health["stt"] = Health(

@@ -32,7 +32,7 @@ def serve():
 
     class SyntheticDecision(FakeDecision):
         async def evaluate(self, state, text):
-            if "incohérence" in text.casefold():
+            if "contradiction" in text.casefold():
                 decision = await FakeDecision("capture").evaluate(state, text)
                 return decision.model_copy(
                     update={
@@ -42,12 +42,10 @@ def serve():
                         "timing": "later",
                         "signal": "urgent",
                         "speech_depth": "brief",
-                        "rationale": "Le budget vient d’être contredit.",
+                        "rationale": "The budget was just contradicted.",
                     }
                 )
-            route = (
-                "investigate" if text.startswith("Quorumy, recherche") else "capture"
-            )
+            route = "investigate" if text.startswith("Quorumy, research") else "capture"
             # An explicit request assigns a mission and authorizes its report.
             return await FakeDecision(route).evaluate(state, text)
 
@@ -56,17 +54,17 @@ def serve():
             system = messages[0]["content"]
             if "background missions" in system:
                 if any("TOOL_RESULT" in m["content"] for m in messages):
-                    value = {"working": "Résultat disponible", "tool": None}
+                    value = {"working": "Result ready", "tool": None}
                 else:
                     latest = json.loads(messages[-1]["content"])["recent_transcript"][
                         -1
                     ]["text"]
                     value = {
-                        "working": "Recherche de la documentation",
+                        "working": "Looking up the documentation",
                         "tool": {
                             "name": "fake_search",
                             "arguments": {
-                                "query": "lente" if "lente" in latest else "rapide"
+                                "query": "slow" if "slow" in latest else "fast"
                             },
                         },
                     }
@@ -75,31 +73,31 @@ def serve():
                 content = json.dumps(
                     {
                         "speak": True,
-                        "spoken_core": "La documentation de contrôle est disponible.",
+                        "spoken_core": "The control documentation is available.",
                     }
                 )
             elif "structured shared memory" in system:
                 content = json.dumps(
                     {
                         "synthesis": [
-                            "L’équipe prépare le prototype pour la démonstration."
+                            "The team is preparing the prototype for the demonstration."
                         ],
-                        "topics": ["Une interface claire et accessible"],
-                        "commitments": ["Renard prépare le prototype."],
-                        "actions": ["Vérifier le parcours sur mobile."],
+                        "topics": ["A clear and accessible interface"],
+                        "commitments": ["You prepare the prototype."],
+                        "actions": ["Check the mobile path."],
                     }
                 )
-            elif "spoken_core" in system and "incohérence" in messages[-1]["content"]:
+            elif "spoken_core" in system and "contradiction" in messages[-1]["content"]:
                 content = json.dumps(
                     {
                         "speak": True,
                         "spoken_core": (
-                            "Le budget annoncé ne correspond plus au chiffre précédent."
+                            "The announced budget no longer matches the previous figure."
                         ),
                     }
                 )
             elif "Give this evolving session" in system:
-                content = "Prototype de démonstration"
+                content = "Demonstration prototype"
             elif "board" in system.lower():
                 content = json.dumps(
                     {
@@ -107,8 +105,8 @@ def serve():
                             {
                                 "kind": "idea",
                                 "concept_key": "mobile",
-                                "title": "Une interface lisible sur mobile",
-                                "body": "Simplifier le parcours et garder les réglages secondaires accessibles dans un menu.",
+                                "title": "An interface that is readable on mobile",
+                                "body": "Simplify the path and keep secondary settings available in a menu.",
                                 "source_card_ids": [],
                             }
                         ],
@@ -127,14 +125,14 @@ def serve():
         )
 
         async def search(arguments):
-            if arguments["query"] == "lente":
+            if arguments["query"] == "slow":
                 await asyncio.Event().wait()
             return {
                 "status": "ok",
-                "summary": "Documentation de contrôle",
+                "summary": "Control documentation",
                 "results": [
                     {
-                        "title": "Source de contrôle",
+                        "title": "Control source",
                         "url": "https://example.org/quorumy-evidence",
                     },
                 ],
@@ -188,8 +186,8 @@ def check_tab_audio(playwright, base_url):
         context = browser.new_context()
         quorumy = context.new_page()
         quorumy.goto(base_url)
-        quorumy.get_by_label("Source de la conversation").select_option("mixed")
-        quorumy.get_by_text("Faire entendre Quorumy dans l’appel", exact=True).click()
+        quorumy.get_by_label("Conversation source").select_option("mixed")
+        quorumy.get_by_text("Let the call hear Quorumy", exact=True).click()
         receiver = context.new_page()
         receiver.goto(f"{base_url}/health")
         receiver.set_content(
@@ -221,9 +219,9 @@ def check_tab_audio(playwright, base_url):
         assert receiver.evaluate("!!window.ready"), receiver.evaluate("window.failure")
         receiver.wait_for_timeout(300)
         baseline = receiver.evaluate("window.peak")
-        quorumy.get_by_role("button", name="Jouer le son de test").click()
+        quorumy.get_by_role("button", name="Play the test sound").click()
         expect(quorumy.get_by_role("status")).to_contain_text(
-            "Un participant doit confirmer"
+            "A participant must confirm"
         )
         receiver.wait_for_function("window.peak > 0.02", timeout=5000)
         peak = receiver.evaluate("window.peak")
@@ -277,7 +275,7 @@ def check(tab_audio=False):
             for _ in range(100):
                 if process.poll() is not None:
                     raise RuntimeError(
-                        "Le serveur de test s’est arrêté. Voir tmp/quorumy-browser-server.log."
+                        "The test server stopped. See tmp/quorumy-browser-server.log."
                     )
                 try:
                     urllib.request.urlopen(f"http://127.0.0.1:{PORT}/health", timeout=1)
@@ -314,10 +312,10 @@ def check(tab_audio=False):
                 page.on("pageerror", lambda e: errors.append(str(e)))
                 page.goto(f"http://127.0.0.1:{PORT}/")
                 expect(
-                    page.get_by_role("heading", name="Faites une place à Quorumy.")
+                    page.get_by_role("heading", name="Make room for Quorumy.")
                 ).to_be_visible()
                 expect(
-                    page.get_by_role("button", name="Démarrer une session")
+                    page.get_by_role("button", name="Start a session")
                 ).to_be_disabled()
 
                 def responsive(label, screenshots=True):
@@ -337,24 +335,22 @@ def check(tab_audio=False):
                             )
 
                 responsive("home")
-                page.get_by_label("Source de la conversation").select_option("mixed")
-                page.get_by_text(
-                    "Faire entendre Quorumy dans l’appel", exact=True
-                ).click()
+                page.get_by_label("Conversation source").select_option("mixed")
+                page.get_by_text("Let the call hear Quorumy", exact=True).click()
                 responsive("audio-appel")
-                page.get_by_role("button", name="Jouer le son de test").click()
+                page.get_by_role("button", name="Play the test sound").click()
                 expect(page.get_by_role("status")).to_contain_text(
-                    "Un participant doit confirmer"
+                    "A participant must confirm"
                 )
-                page.get_by_label("Source de la conversation").select_option("text")
+                page.get_by_label("Conversation source").select_option("text")
                 page.get_by_role("checkbox").check()
                 expect(
-                    page.get_by_role("button", name="Démarrer une session")
+                    page.get_by_role("button", name="Start a session")
                 ).to_be_enabled()
-                page.get_by_role("button", name="Démarrer une session").click()
-                field = page.get_by_role("textbox", name="Message à Quorumy")
+                page.get_by_role("button", name="Start a session").click()
+                field = page.get_by_role("textbox", name="Message to Quorumy")
                 expect(field).to_be_enabled()
-                field.fill("Il y a une incohérence sur le budget.")
+                field.fill("There is a contradiction in the budget.")
                 field.press("Enter")
                 urgent = page.locator(".hand-signal.urgent")
                 expect(urgent).to_be_visible()
@@ -362,21 +358,19 @@ def check(tab_audio=False):
                 urgent.click()
                 expect(
                     page.get_by_text(
-                        "Le budget annoncé ne correspond plus au chiffre précédent.",
+                        "The announced budget no longer matches the previous figure.",
                         exact=True,
                     ).first
                 ).to_be_visible()
-                page.get_by_label("Options de la session").click()
-                page.get_by_text(
-                    "Faire entendre Quorumy dans l’appel", exact=True
-                ).click()
+                page.get_by_label("Session options").click()
+                page.get_by_text("Let the call hear Quorumy", exact=True).click()
                 responsive("audio-menu", screenshots=False)
-                page.get_by_role("button", name="Jouer le son de test").click()
+                page.get_by_role("button", name="Play the test sound").click()
                 expect(page.get_by_role("status")).to_contain_text(
-                    "Un participant doit confirmer"
+                    "A participant must confirm"
                 )
-                page.get_by_label("Options de la session").click()
-                field.fill("Je préparerai le prototype pour la démonstration.")
+                page.get_by_label("Session options").click()
+                field.fill("I will prepare the prototype for the demonstration.")
                 field.press("Enter")
                 page.get_by_role("button", name="Notes", exact=True).click()
                 expect(page.locator(".notes-document")).to_contain_text(
@@ -384,120 +378,120 @@ def check(tab_audio=False):
                 )
                 responsive("notes")
 
-                page.get_by_label("Options de la session").click()
-                page.get_by_title("Couper la voix").click()
-                page.get_by_label("Options de la session").click()
-                field.fill("Quorumy, recherche lente pour tester l’annulation.")
+                page.get_by_label("Session options").click()
+                page.get_by_title("Mute voice").click()
+                page.get_by_label("Session options").click()
+                field.fill("Quorumy, research slow to test cancellation.")
                 field.press("Enter")
                 page.get_by_role("button", name="Agents", exact=True).click()
                 page.locator('[data-node="worker"]').click()
                 expect(
-                    page.get_by_role("button", name="Arrêter cette recherche")
+                    page.get_by_role("button", name="Stop this research")
                 ).to_be_visible()
-                page.get_by_role("button", name="Arrêter cette recherche").click()
-                expect(page.locator(".node-inspector")).to_contain_text("Annulée")
+                page.get_by_role("button", name="Stop this research").click()
+                expect(page.locator(".node-inspector")).to_contain_text("Canceled")
                 responsive("recherche-annulee")
-                page.get_by_label("Fermer les détails").click()
-                field.fill("Quorumy, recherche la documentation de contrôle.")
+                page.get_by_label("Close details").click()
+                field.fill("Quorumy, research the control documentation.")
                 field.press("Enter")
                 page.get_by_role("button", name="Conversation", exact=True).click()
                 expect(
                     page.get_by_text(
-                        "La documentation de contrôle est disponible.", exact=True
+                        "The control documentation is available.", exact=True
                     )
                 ).to_be_visible()
                 page.locator(".line.assistant").filter(
-                    has_text="La documentation de contrôle est disponible."
-                ).get_by_text("Origine de cette réponse", exact=True).first.click()
+                    has_text="The control documentation is available."
+                ).get_by_text("Where this answer came from", exact=True).first.click()
                 expect(
-                    page.get_by_role("link", name="Source de contrôle")
+                    page.get_by_role("link", name="Control source")
                 ).to_have_attribute("href", "https://example.org/quorumy-evidence")
                 responsive("reponse-sourcee")
 
-                for view in ["Tableau", "Conversation", "Agents", "Engagements"]:
+                for view in ["Board", "Conversation", "Agents", "Commitments"]:
                     page.get_by_role("button", name=view, exact=True).click()
                     responsive(view.lower())
-                page.get_by_role("button", name="Préparer les propositions").click()
+                page.get_by_role("button", name="Prepare proposals").click()
                 expect(page.locator(".commitment")).to_have_count(1)
-                page.get_by_label("Responsable").select_option("renard")
-                page.get_by_label("Échéance confirmée").fill("2026-10-02")
-                page.get_by_role("button", name="Confirmer", exact=True).click()
+                page.get_by_label("Owner").select_option("renard")
+                page.get_by_label("Confirmed due date").fill("2026-10-02")
+                page.get_by_role("button", name="Confirm", exact=True).click()
                 expect(page.locator(".commitment.confirmed")).to_have_count(1)
                 with page.expect_download() as download:
-                    page.get_by_role("button", name="Rappels calendrier").click()
+                    page.get_by_role("button", name="Calendar reminders").click()
                 calendar = Path(download.value.path()).read_text(encoding="utf-8")
                 assert "BEGIN:VEVENT" in calendar and "20261002" in calendar
                 responsive("engagements-confirmes")
 
-                field.fill("Finalement, nous décalons le prototype.")
+                field.fill("Finally, we are postponing the prototype.")
                 field.press("Enter")
-                page.get_by_role("button", name="Engagements", exact=True).click()
-                expect(page.locator(".notice")).to_contain_text("discussion a évolué")
+                page.get_by_role("button", name="Commitments", exact=True).click()
+                expect(page.locator(".notice")).to_contain_text("has moved on")
                 expect(
-                    page.get_by_role("button", name="Confirmer", exact=True)
+                    page.get_by_role("button", name="Confirm", exact=True)
                 ).to_be_disabled()
-                page.get_by_title("Mettre en pause").click()
+                page.get_by_title("Pause").click()
                 expect(field).to_be_disabled()
-                page.get_by_title("Reprendre l’assistant").click()
+                page.get_by_title("Resume the companion").click()
                 dialog = page.get_by_role("dialog")
                 expect(
-                    dialog.get_by_role("button", name="Reprendre la session")
+                    dialog.get_by_role("button", name="Resume the session")
                 ).to_be_disabled()
                 dialog.get_by_role("checkbox").check()
-                dialog.get_by_role("button", name="Reprendre la session").click()
+                dialog.get_by_role("button", name="Resume the session").click()
                 expect(field).to_be_enabled()
 
-                field.fill("Brouillon conservé après la coupure")
+                field.fill("Draft kept after the drop")
                 time_origin = page.evaluate("performance.timeOrigin")
                 page.evaluate("window.__testSockets.at(-1).close()")
                 page.wait_for_function(
                     "window.__testSockets.length >= 2 && window.__testSockets.at(-1).readyState === 1"
                 )
-                expect(page.locator(".connection")).to_contain_text("Connecté")
+                expect(page.locator(".connection")).to_contain_text("Connected")
                 expect(page.locator(".session-notice")).to_contain_text(
-                    "Session en pause"
+                    "Session paused"
                 )
-                expect(field).to_have_value("Brouillon conservé après la coupure")
+                expect(field).to_have_value("Draft kept after the drop")
                 expect(field).to_be_disabled()
                 assert page.evaluate("performance.timeOrigin") == time_origin
-                page.get_by_title("Reprendre l’assistant").click()
+                page.get_by_title("Resume the companion").click()
                 dialog = page.get_by_role("dialog")
                 expect(
-                    dialog.get_by_role("button", name="Reprendre la session")
+                    dialog.get_by_role("button", name="Resume the session")
                 ).to_be_disabled()
                 dialog.get_by_role("checkbox").check()
-                dialog.get_by_role("button", name="Reprendre la session").click()
+                dialog.get_by_role("button", name="Resume the session").click()
                 expect(field).to_be_enabled()
                 field.fill("")
 
-                page.get_by_label("Options de la session").click()
+                page.get_by_label("Session options").click()
                 responsive("options")
                 page.once("dialog", lambda d: d.accept("Prototype Quorumy relu"))
-                page.get_by_title("Renommer la session").click()
+                page.get_by_title("Rename the session").click()
                 expect(page.locator(".brand strong")).to_have_text(
                     "Prototype Quorumy relu"
                 )
                 with page.expect_download() as download:
-                    page.get_by_title("Exporter la session").click()
+                    page.get_by_title("Export the session").click()
                 exported = Path(download.value.path()).read_text(encoding="utf-8")
-                assert "Je préparerai le prototype" in exported
-                page.get_by_title("Terminer la session").click()
+                assert "I will prepare the prototype" in exported
+                page.get_by_title("End the session").click()
                 expect(
-                    page.get_by_role("heading", name="Faites une place à Quorumy.")
+                    page.get_by_role("heading", name="Make room for Quorumy.")
                 ).to_be_visible()
                 page.get_by_role(
                     "button", name="Prototype Quorumy relu", exact=False
                 ).click()
                 expect(field).to_be_disabled()
                 expect(page.locator(".session-notice")).to_contain_text(
-                    "Session en pause"
+                    "Session paused"
                 )
                 expect(page.locator(".notes-document")).to_contain_text("prototype")
                 # A reload opens the current session paused, never resumes capture.
                 page.reload()
                 expect(field).to_be_disabled()
                 expect(page.locator(".session-notice")).to_contain_text(
-                    "Session en pause"
+                    "Session paused"
                 )
                 assert not errors, errors
                 report = {

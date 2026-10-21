@@ -549,7 +549,7 @@ export interface components {
             session_id?: string | null;
             /**
              * Title
-             * @default Nouvelle session
+             * @default New session
              */
             title: string;
             /**

@@ -106,8 +106,8 @@ export function WorkflowCanvas({
       label: "Conversation",
       detail:
         state.capture_mode === "text"
-          ? `${state.transcript.length} interventions écrites`
-          : "Audio de la conversation",
+          ? `${state.transcript.length} typed turns`
+          : "Conversation audio",
       status: audioStatus,
       icon: Mic2,
       active: audioStatus === "active",
@@ -117,8 +117,8 @@ export function WorkflowCanvas({
       label: "Transcription",
       detail:
         state.capture_mode === "text"
-          ? "Saisie au clavier"
-          : `${pipeline?.stt_turns ?? 0} interventions transcrites`,
+          ? "Keyboard input"
+          : `${pipeline?.stt_turns ?? 0} transcribed turns`,
       status: pipeline?.stt_last_event || "waiting",
       icon: AudioLines,
       active:
@@ -126,9 +126,9 @@ export function WorkflowCanvas({
     },
     {
       key: "memory",
-      label: "Mémoire partagée",
-      detail: `${state.transcript.length} interventions, ${tasks.length} recherches`,
-      status: "enregistré",
+      label: "Shared memory",
+      detail: `${state.transcript.length} turns, ${tasks.length} searches`,
+      status: "saved",
       icon: Database,
       active: running.length > 0 || runningTasks.length > 0,
     },
@@ -137,22 +137,22 @@ export function WorkflowCanvas({
       label: "Orientation",
       detail: decision
         ? {
-            ignore: "Aucune action requise",
-            capture: "Mémoriser la discussion",
-            investigate: "Approfondir la question",
-            respond: "Préparer une réponse",
-            act: "Préparer une action",
-            control: "Ajuster l’assistant",
+            ignore: "No action needed",
+            capture: "Remember the discussion",
+            investigate: "Look into the question",
+            respond: "Prepare an answer",
+            act: "Prepare an action",
+            control: "Adjust the companion",
           }[decision.result.route]
-        : "Attend une intervention",
+        : "Waiting for a turn",
       status: decisionActive ? "deciding" : "idle",
       icon: BrainCircuit,
       active: decisionActive,
     },
     {
       key: "speaker",
-      label: "Réponse",
-      detail: speaker?.summary || "Prêt à vous répondre",
+      label: "Reply",
+      detail: speaker?.summary || "Ready to answer",
       status:
         speaker?.status || (state.voice_mode === "muted" ? "muted" : "idle"),
       icon: Bot,
@@ -160,11 +160,10 @@ export function WorkflowCanvas({
     },
     {
       key: "worker",
-      label: "Recherches",
-      detail:
-        worker?.summary || lastTask?.summary || "Aucune recherche en cours",
+      label: "Research",
+      detail: worker?.summary || lastTask?.summary || "No research running",
       status: runningTasks.length
-        ? `${runningTasks.length} en cours`
+        ? `${runningTasks.length} running`
         : lastTask?.status || "idle",
       icon: Search,
       active: Boolean(worker || runningTasks.length),
@@ -174,23 +173,23 @@ export function WorkflowCanvas({
       label: "Notes",
       detail:
         notes?.summary ||
-        `${state.notes_cursor ?? 0}/${state.transcript.length} interventions intégrées`,
+        `${state.notes_cursor ?? 0}/${state.transcript.length} turns integrated`,
       status: notes?.status || `v${state.notes_version ?? 0}`,
       icon: FileText,
       active: Boolean(notes),
     },
     {
       key: "board",
-      label: "Tableau",
-      detail: `${state.cards.length} idées conservées`,
+      label: "Board",
+      detail: `${state.cards.length} ideas kept`,
       status: boardActive ? "curating" : naming ? "naming" : "synced",
       icon: Lightbulb,
       active: boardActive,
     },
     {
       key: "voice",
-      label: "Voix",
-      detail: speech?.text || "Attend le bon moment",
+      label: "Voice",
+      detail: speech?.text || "Waiting for the right moment",
       status: speech?.status || "idle",
       icon: Volume2,
       active: Boolean(
@@ -208,10 +207,10 @@ export function WorkflowCanvas({
       <header className="workflow-heading">
         <div>
           <BrainCircuit />
-          <span>Les agents au travail</span>
+          <span>Agents at work</span>
         </div>
         <p>
-          {running.length} agents et {runningTasks.length} recherches en cours
+          {running.length} agents and {runningTasks.length} searches running
         </p>
       </header>
       <div className="workflow-viewport">
@@ -271,23 +270,23 @@ export function WorkflowCanvas({
                 <small>
                   {(
                     {
-                      active: "En cours",
-                      idle: "Prêt",
-                      waiting: "En attente",
-                      synced: "Enregistré",
-                      done: "Terminé",
-                      failed: "À vérifier",
-                      muted: "Voix coupée",
-                      paused: "En pause",
-                      running: "En cours",
-                      curating: "Organisation",
-                      deciding: "Analyse",
-                      naming: "Titre",
-                      finished: "Terminé",
-                      suppressed: "Réponse écrite",
-                      authorized: "Prêt à parler",
-                      playing: "En lecture",
-                      canceled: "Interrompu",
+                      active: "Live",
+                      idle: "Ready",
+                      waiting: "Waiting",
+                      synced: "Saved",
+                      done: "Done",
+                      failed: "Check",
+                      muted: "Voice off",
+                      paused: "Paused",
+                      running: "Running",
+                      curating: "Organizing",
+                      deciding: "Deciding",
+                      naming: "Title",
+                      finished: "Done",
+                      suppressed: "Written answer",
+                      authorized: "Ready to speak",
+                      playing: "Playing",
+                      canceled: "Stopped",
                     } as Record<string, string>
                   )[node.status] ?? node.status}
                 </small>
@@ -331,22 +330,22 @@ function NodeInspector({
   const title = {
     room: "Conversation",
     stt: "Transcription",
-    memory: "Mémoire partagée",
-    jev: "Orientation de la conversation",
-    speaker: "Réponses de Quorumy",
-    worker: "Recherches",
+    memory: "Shared memory",
+    jev: "Conversation steering",
+    speaker: "Quorumy’s replies",
+    worker: "Research",
     notes: "Notes",
-    board: "Tableau",
-    voice: "Voix",
+    board: "Board",
+    voice: "Voice",
   }[node];
   return (
     <aside className="node-inspector">
       <header>
         <div>
-          <span>Détails</span>
+          <span>Details</span>
           <h2>{title}</h2>
         </div>
-        <button onClick={close} aria-label="Fermer les détails">
+        <button onClick={close} aria-label="Close details">
           <X size={18} />
         </button>
       </header>
@@ -377,13 +376,13 @@ function NodeInspector({
                   <dd>{decision.result.timing}</dd>
                 </dl>
                 <details>
-                  <summary>Contexte de la décision</summary>
+                  <summary>Decision context</summary>
                   <pre>{JSON.stringify(decision.context, null, 2)}</pre>
                 </details>
               </article>
             ))}
           {!state.decisions?.length && (
-            <p className="muted">Aucune décision pour le moment.</p>
+            <p className="muted">No decision yet.</p>
           )}
         </div>
       )}
@@ -466,7 +465,7 @@ function NodeInspector({
       )}
       {(node === "speaker" || node === "worker" || node === "notes") && (
         <details className="inspector-stack">
-          <summary>Historique des agents</summary>
+          <summary>Agent history</summary>
           {runs.map((run) => (
             <article className="inspection-card" key={run.id}>
               <div>
@@ -474,10 +473,10 @@ function NodeInspector({
                 <span className={run.status}>
                   {
                     {
-                      running: "En cours",
-                      done: "Terminé",
-                      failed: "Échec",
-                      canceled: "Annulé",
+                      running: "Running",
+                      done: "Done",
+                      failed: "Failed",
+                      canceled: "Canceled",
                     }[run.status]
                   }
                 </span>
@@ -486,15 +485,13 @@ function NodeInspector({
                 {typeof run.duration_ms === "number"
                   ? `${(run.duration_ms / 1000).toFixed(1)} s`
                   : run.status === "running"
-                    ? "En cours"
-                    : "Durée indisponible"}
+                    ? "Running"
+                    : "Duration unavailable"}
               </p>
               {run.error && <code>{run.error}</code>}
             </article>
           ))}
-          {!runs.length && (
-            <p className="muted">Aucune activité enregistrée.</p>
-          )}
+          {!runs.length && <p className="muted">No activity recorded.</p>}
         </details>
       )}
     </aside>

@@ -21,17 +21,17 @@ describe("Meeting evidence", () => {
     const state = {
       ...base,
       speeches: [
-        { ...speech, id: "done", text: "Réponse terminée", status: "finished" },
+        { ...speech, id: "done", text: "Finished answer", status: "finished" },
         {
           ...speech,
           id: "cut",
-          text: "Réponse partielle",
+          text: "Partial answer",
           status: "interrupted",
         },
         {
           ...speech,
           id: "canceled",
-          text: "Ancien brouillon annulé",
+          text: "Canceled old draft",
           status: "canceled",
         },
         {
@@ -43,26 +43,26 @@ describe("Meeting evidence", () => {
         {
           ...speech,
           id: "muted",
-          text: "Réponse écrite utile",
+          text: "Useful written answer",
           status: "suppressed",
           error: "voice_muted",
         },
         {
           ...speech,
           id: "blocked",
-          text: "Répétition bloquée",
+          text: "Blocked repetition",
           status: "suppressed",
           error: "duplicate",
         },
       ],
     } as QuorumyState;
     render(<Transcript state={state} partial="" />);
-    expect(screen.getByText("Réponse terminée")).toBeTruthy();
-    expect(screen.getByText("Interrompue · texte préparé")).toBeTruthy();
-    expect(screen.getByText("Réponse écrite utile")).toBeTruthy();
-    expect(screen.queryByText("Ancien brouillon annulé")).toBeNull();
+    expect(screen.getByText("Finished answer")).toBeTruthy();
+    expect(screen.getByText("Interrupted · prepared text")).toBeTruthy();
+    expect(screen.getByText("Useful written answer")).toBeTruthy();
+    expect(screen.queryByText("Canceled old draft")).toBeNull();
     expect(screen.queryByText("Brouillon en attente")).toBeNull();
-    expect(screen.queryByText("Répétition bloquée")).toBeNull();
+    expect(screen.queryByText("Blocked repetition")).toBeNull();
   });
 
   it("links research results from the actual tool payload to their board card", () => {
@@ -72,8 +72,8 @@ describe("Meeting evidence", () => {
         {
           id: "card1",
           kind: "finding",
-          title: "Document vérifié",
-          body: "Résultat",
+          title: "Verified document",
+          body: "Result",
           source_ids: ["task1"],
         },
       ],
@@ -82,7 +82,7 @@ describe("Meeting evidence", () => {
           id: "task1",
           result: {
             results: [
-              { title: "Notice officielle", url: "https://example.org/notice" },
+              { title: "Official notice", url: "https://example.org/notice" },
             ],
           },
         },
@@ -91,7 +91,7 @@ describe("Meeting evidence", () => {
     render(<Board state={state} />);
     expect(
       screen
-        .getByRole("link", { name: "Notice officielle" })
+        .getByRole("link", { name: "Official notice" })
         .getAttribute("href"),
     ).toBe("https://example.org/notice");
   });
@@ -99,13 +99,11 @@ describe("Meeting evidence", () => {
   it("shows the question and distinct safe research sources under Quorumy's answer", () => {
     const state = {
       ...base,
-      transcript: [
-        { id: "question", text: "Quelle source ?", speaker: "Renard" },
-      ],
+      transcript: [{ id: "question", text: "Which source?", speaker: "You" }],
       speeches: [
         {
           id: "answer",
-          text: "Voici le résultat.",
+          text: "Here is the result.",
           status: "finished",
           source_ids: ["research"],
         },
@@ -117,34 +115,34 @@ describe("Meeting evidence", () => {
           result: {
             sources: [
               {
-                title: "Document original",
+                title: "Original document",
                 url: "https://example.org/evidence",
               },
-              { title: "Lien dangereux", url: "javascript:alert(1)" },
+              { title: "Unsafe link", url: "javascript:alert(1)" },
               {
-                title: "Identifiants cachés",
+                title: "Hidden credentials",
                 url: "https://user:password@example.org/",
               },
             ],
             results: [
-              { title: "Doublon", url: "https://example.org/evidence" },
+              { title: "Duplicate", url: "https://example.org/evidence" },
               null,
-              { title: "Sans URL" },
+              { title: "No URL" },
             ],
           },
         },
       ],
     } as unknown as QuorumyState;
     render(<Transcript state={state} partial="" />);
-    fireEvent.click(screen.getByText("Origine de cette réponse"));
-    expect(screen.getByText("Sources consultées · 1")).toBeTruthy();
+    fireEvent.click(screen.getByText("Where this answer came from"));
+    expect(screen.getByText("Sources checked · 1")).toBeTruthy();
     expect(screen.getAllByRole("link")).toHaveLength(1);
     expect(
       screen
-        .getByRole("link", { name: "Document original" })
+        .getByRole("link", { name: "Original document" })
         .getAttribute("href"),
     ).toBe("https://example.org/evidence");
-    expect(screen.queryByRole("link", { name: "Lien dangereux" })).toBeNull();
-    expect(screen.getAllByText("Quelle source ?")).toHaveLength(2);
+    expect(screen.queryByRole("link", { name: "Unsafe link" })).toBeNull();
+    expect(screen.getAllByText("Which source?")).toHaveLength(2);
   });
 });

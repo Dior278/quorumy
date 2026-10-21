@@ -21,7 +21,7 @@ type Props = {
 
 export function WorkspaceNavigation(props: Props) {
   return (
-    <nav className="view-nav" aria-label="Vues de la session">
+    <nav className="view-nav" aria-label="Session views">
       {props.items.map((item) => {
         const Icon = item.icon;
         return (

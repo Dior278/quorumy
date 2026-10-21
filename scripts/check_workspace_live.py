@@ -24,11 +24,11 @@ async def main():
     await engine.start()
     try:
         await engine.start_session(
-            {"capture_mode": "text", "consent": True, "language": "fr"}
+            {"capture_mode": "text", "consent": True, "language": "en"}
         )
         await engine.set_voice_mode("muted")
         await engine.commit_utterance(
-            "Je préparerai le prototype pour la démonstration. Nous retenons une interface en français et une mémoire locale.",
+            "I will prepare the prototype for the demonstration. We are keeping an English interface and local memory.",
             "manual",
         )
         await asyncio.wait_for(engine.drain(), timeout=100)
@@ -40,7 +40,7 @@ async def main():
         for note in board["notes"]:
             assert all(e["quote"] in e["text"] for e in note["evidence"])
         await engine.commit_utterance(
-            "Quorumy, recherche sur le web la documentation officielle de WebRTC et conserve la source pour notre équipe.",
+            "Quorumy, look up the official WebRTC documentation on the web and keep the source for our team.",
             "manual",
         )
         await asyncio.wait_for(engine.drain(), timeout=150)

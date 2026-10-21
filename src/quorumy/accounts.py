@@ -63,7 +63,7 @@ def _clean_model(model: str) -> str:
     candidate = model.strip() or DEFAULT_HF_MODEL
     if not _MODEL.fullmatch(candidate) or "/" not in candidate or "://" in candidate:
         raise ValueError(
-            "Indiquez un modèle Hugging Face, par exemple Qwen/Qwen2.5-7B-Instruct:cheapest."
+            "Enter a Hugging Face model, for example Qwen/Qwen2.5-7B-Instruct:cheapest."
         )
     return candidate
 
@@ -71,7 +71,7 @@ def _clean_model(model: str) -> str:
 def _clean_name(name: str) -> str:
     cleaned = " ".join(name.split())
     if not _NAME.fullmatch(cleaned):
-        raise ValueError("Le nom doit contenir 2 à 40 caractères.")
+        raise ValueError("The name must be 2 to 40 characters.")
     return cleaned
 
 
@@ -113,7 +113,7 @@ class AccountStore:
         model = _clean_model(body.model)
         token = body.hf_token.strip()
         if len(token) < 8:
-            raise ValueError("Ajoutez votre clé Hugging Face.")
+            raise ValueError("Add your Hugging Face key.")
         user = User(id=secrets.token_hex(16), name=name, hf_token=token, model=model)
         assert self._db is not None
         try:
@@ -130,7 +130,7 @@ class AccountStore:
                 ),
             )
         except aiosqlite.IntegrityError as error:
-            raise ValueError("Ce nom est déjà utilisé.") from error
+            raise ValueError("That name is already in use.") from error
         session = await self._new_session(user.id)
         await self._db.commit()
         return user, session
@@ -143,7 +143,7 @@ class AccountStore:
         )
         row = await cursor.fetchone()
         if row is None or not _verify_password(body.password, row["password_hash"]):
-            raise ValueError("Nom ou mot de passe incorrect.")
+            raise ValueError("Incorrect name or password.")
         model = _clean_model(body.model) if body.model.strip() else row["model"]
         hf_token = body.hf_token.strip() or row["hf_token"]
         if hf_token != row["hf_token"] or model != row["model"]:
